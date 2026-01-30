@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Subscriber, PortfolioData } from '../types';
 import { SubscriberInfo } from './SubscriberInfo';
 import { PortfolioDetails } from './PortfolioDetails';
@@ -12,6 +12,12 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ subscriber, portfolio, onLogout }) => {
+  const [currentSubscriber, setCurrentSubscriber] = useState(subscriber);
+
+  const handleProfileUpdate = (updatedSubscriber: Subscriber) => {
+    setCurrentSubscriber(updatedSubscriber);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
       {/* Header */}
@@ -40,7 +46,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriber, portfolio, onL
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Section 1: Subscriber Info */}
         <section>
-          <SubscriberInfo subscriber={subscriber} />
+          <SubscriberInfo subscriber={currentSubscriber} />
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -51,7 +57,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriber, portfolio, onL
 
           {/* Section 3: Profile Card (Takes 1/3 width on large screens) */}
           <section className="lg:col-span-1">
-            <ProfileCard subscriber={subscriber} />
+            <ProfileCard 
+              subscriber={currentSubscriber} 
+              onProfileUpdate={handleProfileUpdate}
+            />
           </section>
         </div>
       </main>

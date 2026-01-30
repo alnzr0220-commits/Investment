@@ -1,8 +1,9 @@
 // API URL for staging environment (updated v3)
 const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
 
-// Google Sheets CSV URL
-const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv';
+// Google Sheets CSV URLs
+const SUBSCRIBERS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?gid=0&single=true&output=csv';
+const PORTFOLIO_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?gid=1614954373&single=true&output=csv';
 
 export const api = {
   async login(fullName: string, phoneNumber: string) {
@@ -44,8 +45,8 @@ export const api = {
 
   async getAllSubscribers() {
     try {
-      // First try to get from Google Sheets
-      const response = await fetch(GOOGLE_SHEETS_CSV_URL);
+      // Get from Google Sheets (Subscribers sheet)
+      const response = await fetch(SUBSCRIBERS_SHEET_URL);
       if (response.ok) {
         const csvText = await response.text();
         return this.parseCSVToSubscribers(csvText);
@@ -62,8 +63,8 @@ export const api = {
 
   async getPortfolio() {
     try {
-      // First try to get from Google Sheets
-      const response = await fetch(GOOGLE_SHEETS_CSV_URL);
+      // Get from Google Sheets (Portfolio sheet)
+      const response = await fetch(PORTFOLIO_SHEET_URL);
       if (response.ok) {
         const csvText = await response.text();
         return this.parseCSVToPortfolio(csvText);
@@ -79,26 +80,26 @@ export const api = {
   },
 
   parseCSVToSubscribers(csvText: string) {
-    const lines = csvText.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim());
+    const lines = csvText.split('\n').filter(line => line.trim());
     const subscribers = [];
 
+    // Skip header row (index 0)
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.trim());
-      if (values.length >= headers.length && values[0]) {
+      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+      if (values.length >= 11 && values[0]) {
         const subscriber = {
-          fullName: values[0] || '',
-          subscriberNumber: values[1] || '',
-          phoneNumber: values[2] || '',
-          sharesCount: parseFloat(values[3]) || 0,
-          realPortfolioValue: parseFloat(values[4]) || 0,
-          totalIncome: parseFloat(values[5]) || 0,
-          totalSavings: parseFloat(values[6]) || 0,
-          monthlyPayment: parseFloat(values[7]) || 0,
-          baseShareValue: parseFloat(values[8]) || 0,
-          currentShareValue: parseFloat(values[9]) || 0,
-          ownershipPercentage: parseFloat(values[10]) || 0,
-          growthPercentage: parseFloat(values[11]) || 0,
+          phoneNumber: values[0] || '', // رقم المرور
+          fullName: values[1] || '', // اسم المشترك
+          subscriberNumber: values[2] || '', // رقم المشترك
+          sharesCount: parseFloat(values[3]) || 0, // عدد الاسهم
+          totalSavings: parseFloat(values[4]) || 0, // إجمالي مدخراتك
+          monthlyPayment: parseFloat(values[5]) || 0, // دفعة شهرية (ريال)
+          baseShareValue: parseFloat(values[6]) || 0, // قيمة سهم الاساس
+          currentShareValue: parseFloat(values[7]) || 0, // قيمة سهم الحالي
+          realPortfolioValue: parseFloat(values[8]) || 0, // القيمة الحقيقة لمحفظتك
+          ownershipPercentage: parseFloat(values[9]) || 0, // نسبة تملك في صندوق
+          growthPercentage: parseFloat(values[10]) || 0, // نسبة النمو المحفظة
+          totalIncome: parseFloat(values[8]) || 0, // استخدام القيمة الحقيقية كدخل إجمالي
         };
         subscribers.push(subscriber);
       }
@@ -107,25 +108,35 @@ export const api = {
   },
 
   parseCSVToPortfolio(csvText: string) {
-    const lines = csvText.split('\n');
+    const lines = csvText.split('\n').filter(line => line.trim());
     const items = [];
     let totalValue = 0;
 
-    // Skip header and process portfolio data (assuming it starts from a specific row)
+    // Skip header row (index 0)
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.trim());
-      if (values.length >= 6 && values[0] && values[0] !== 'Portfolio') {
+      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+      if (values.length >= 7 && values[0]) {
         const item = {
-          companyName: values[0] || '',
-          assetSymbol: values[1] || '',
-          units: parseFloat(values[2]) || 0,
-          marketPrice: parseFloat(values[3]) || 0,
-          totalValueUSD: parseFloat(values[4]) || 0,
-          totalValueSAR: parseFloat(values[5]) || 0,
-          growth: parseFloat(values[6]) || 0,
+          companyName: values[0] || '', // اسم الصندوق
+          assetSymbol: values[1] || '', // الرمز
+          units: parseFloat(values[2]) || 0, // عدد الوحدات (عددالاسهم)
+          marketPrice: parseFloat(values[3]) || 0, // سعر السوق
+          totalValueUSD: parseFloat(values[4]) || 0, // إجمالي القيمة بالدولار
+          totalValueSAR: parseFloat(values[5]) || 0, // إجمالي القيمة بالريال
+          growth: parseFloat(values[6]) || 0, // يمكن إضافة نمو إذا كان متوفر
         };
         items.push(item);
         totalValue += item.totalValueSAR;
+      }
+    }
+
+    // إذا كان هناك إجمالي في آخر صف
+    const lastLine = lines[lines.length - 1];
+    if (lastLine && lastLine.includes('إجمالي')) {
+      const lastValues = lastLine.split(',').map(v => v.trim().replace(/"/g, ''));
+      const totalFromSheet = parseFloat(lastValues[lastValues.length - 1]);
+      if (totalFromSheet > 0) {
+        totalValue = totalFromSheet;
       }
     }
 
@@ -145,6 +156,19 @@ export const api = {
       body: JSON.stringify({ imageUrl }),
     });
     if (!res.ok) throw new Error('Failed to update profile image');
+    return res.json();
+  },
+
+  async uploadImage(file: File) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const res = await fetch(`${API_URL}/api/public/upload/image`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!res.ok) throw new Error('Failed to upload image');
     return res.json();
   },
 
