@@ -1,72 +1,89 @@
-# AI React Website Template
+# Investment Portfolio Management System
 
-A flexible, feature-rich React template designed for AI-generated websites with modern development tools and libraries.
+نظام إدارة المحافظ الاستثمارية - تطبيق ويب متكامل لإدارة ومتابعة الاستثمارات
 
-## ✨ Key Features
+## المميزات الجديدة ✨
 
-- 🚀 **React 18 + TypeScript** - Modern development experience
-- 🎨 **Tailwind CSS** - Utility-first CSS framework
-- ⚡ **Vite** - Fast build tool
-- 🌐 **i18next** - Complete internationalization solution
-- 🎯 **Zustand** - Lightweight state management
-- ✨ **Framer Motion** - Smooth animation effects
-- 🎭 **Headless UI** - Accessible UI components
-- 📦 **Lucide React** - Beautiful icon library
-- 🛣️ **React Router** - Single-page application routing
+### 1. لوحة تحكم الإدمن 👨‍💼
+- الوصول عبر `/admin` في نهاية رابط الموقع
+- عرض جميع المشتركين وبياناتهم
+- إمكانية مشاهدة تفاصيل أي مشترك
+- بحث متقدم بالاسم أو رقم الهاتف
 
-## 🛠️ Tech Stack
+### 2. ربط تلقائي مع Google Sheets 📊
+- جلب البيانات تلقائياً من الجدول المحدد
+- تحديث فوري للأسعار والمحافظ
+- رابط الجدول: [Google Sheets](https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv)
 
-### Core Technologies
-- React 18.3.1 + TypeScript 5.8.3
-- Vite 7.0.0 (Build tool)
-- Tailwind CSS 3.4.17 (CSS framework)
+### 3. تغيير كلمة المرور 🔐
+- خيار جديد في الملف الشخصي
+- التحقق من كلمة المرور الحالية
+- تأكيد كلمة المرور الجديدة
+- واجهة آمنة ومحمية
 
-### Feature Libraries
-- React Router DOM 6.30.1 (Routing)
-- Zustand 4.4.7 (State management)
-- i18next + react-i18next (Internationalization)
-- Framer Motion 11.0.8 (Animations)
-- Headless UI 1.7.18 (UI components)
-- Lucide React (Icon library)
+### 4. رسم بياني محسن 📈
+- عرض التواريخ والأشهر
+- تتبع الارتفاع والانخفاض
+- فترات زمنية متعددة (يوم، أسبوع، شهر، سنة)
+- معلومات تفصيلية عند التمرير
 
-## 🚀 Quick Start
+## كيفية الاستخدام
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+### للمستخدمين العاديين:
+1. تسجيل الدخول بالاسم ورقم الهاتف
+2. مشاهدة المحفظة والأسهم
+3. تغيير كلمة المرور من الملف الشخصي
 
-2. **Start development server**:
-   ```bash
-   npm run dev
-   ```
-   Visit http://localhost:5173 to view the application
+### للإدمن:
+1. الذهاب إلى `/admin`
+2. إدخال كلمة مرور الإدمن
+3. مشاهدة جميع المشتركين
+4. عرض تفاصيل أي مشترك
 
-3. **Build for production**:
-   ```bash
-   npm run build
-   ```
+## التقنيات المستخدمة
 
-4. **Preview build**:
-   ```bash
-   npm run preview
-   ```
+- **Frontend**: React + TypeScript + Vite
+- **UI**: Tailwind CSS + Lucide Icons
+- **Charts**: Recharts
+- **Backend**: Node.js + Express
+- **Database**: Integration with Google Sheets
+- **Deployment**: Vercel
 
-## 📁 Project Structure
+## البيانات المطلوبة في Google Sheets
 
-```
-src/
-├── api/             # API related code
-├── assets/          # Static assets
-├── components/      # Reusable components
-├── layouts/         # Layout components  
-├── pages/           # Page components
-├── styles/          # Style files
-├── types/           # TypeScript type definitions
-├── App.tsx          # Main application component
-└── main.tsx         # Application entry point
-```
+يجب أن يحتوي الجدول على الأعمدة التالية:
+1. الاسم الكامل
+2. رقم المشترك  
+3. رقم الهاتف
+4. عدد الأسهم
+5. قيمة المحفظة الحقيقية
+6. إجمالي الدخل
+7. إجمالي المدخرات
+8. الدفعة الشهرية
+9. قيمة السهم الأساسية
+10. قيمة السهم الحالية
+11. نسبة الملكية
+12. نسبة النمو
 
-## More Information
+## الأمان والحماية
 
-For more detailed project structure, tech stack, configuration instructions and development guide, please refer to the [YOUWARE.md](./YOUWARE.md) file.
+- تشفير كلمات المرور
+- حماية صفحات الإدمن
+- التحقق من الهوية
+- حماية من CSRF
+
+## المساهمة
+
+للمساهمة في تطوير المشروع:
+1. Fork المشروع
+2. إنشاء branch جديد
+3. إضافة التحسينات
+4. إرسال Pull Request
+
+## الدعم
+
+للحصول على الدعم أو الإبلاغ عن مشاكل، يرجى إنشاء Issue في GitHub.
+
+---
+
+تم تطوير هذا المشروع بواسطة فريق التطوير لخدمة المستثمرين وتسهيل إدارة محافظهم الاستثمارية.
