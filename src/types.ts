@@ -23,6 +23,11 @@ export interface PortfolioItem {
   totalValueUSD: number;
   totalValueSAR: number;
   growth?: number;
+  historicalData?: {
+    date: string;
+    value: number;
+    change: number;
+  }[];
 }
 
 export interface PortfolioData {

@@ -11,16 +11,29 @@ const COLORS = ['#0ea5e9', '#6366f1', '#10b981', '#f59e0b', '#ec4899'];
 
 const MOCK_GROWTH_DATA = {
   day: [
-    { name: '9:00', value: 100 }, { name: '11:00', value: 102 }, { name: '13:00', value: 101 }, { name: '15:00', value: 103 }
+    { name: '9:00', value: 100, date: '2024-01-15 09:00' }, 
+    { name: '11:00', value: 102, date: '2024-01-15 11:00' }, 
+    { name: '13:00', value: 101, date: '2024-01-15 13:00' }, 
+    { name: '15:00', value: 103, date: '2024-01-15 15:00' }
   ],
   week: [
-    { name: 'Sun', value: 100 }, { name: 'Mon', value: 105 }, { name: 'Tue', value: 103 }, { name: 'Wed', value: 108 }, { name: 'Thu', value: 110 }
+    { name: 'الأحد', value: 100, date: '2024-01-14' }, 
+    { name: 'الاثنين', value: 105, date: '2024-01-15' }, 
+    { name: 'الثلاثاء', value: 103, date: '2024-01-16' }, 
+    { name: 'الأربعاء', value: 108, date: '2024-01-17' }, 
+    { name: 'الخميس', value: 110, date: '2024-01-18' }
   ],
   month: [
-    { name: 'Week 1', value: 100 }, { name: 'Week 2', value: 110 }, { name: 'Week 3', value: 105 }, { name: 'Week 4', value: 115 }
+    { name: 'الأسبوع 1', value: 100, date: '2024-01-01 - 2024-01-07' }, 
+    { name: 'الأسبوع 2', value: 110, date: '2024-01-08 - 2024-01-14' }, 
+    { name: 'الأسبوع 3', value: 105, date: '2024-01-15 - 2024-01-21' }, 
+    { name: 'الأسبوع 4', value: 115, date: '2024-01-22 - 2024-01-28' }
   ],
   year: [
-    { name: 'Q1', value: 100 }, { name: 'Q2', value: 120 }, { name: 'Q3', value: 115 }, { name: 'Q4', value: 130 }
+    { name: 'الربع الأول', value: 100, date: 'يناير - مارس 2024' }, 
+    { name: 'الربع الثاني', value: 120, date: 'أبريل - يونيو 2024' }, 
+    { name: 'الربع الثالث', value: 115, date: 'يوليو - سبتمبر 2024' }, 
+    { name: 'الربع الرابع', value: 130, date: 'أكتوبر - ديسمبر 2024' }
   ]
 };
 
@@ -168,10 +181,34 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                     <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="name" hide />
-                <YAxis hide domain={['dataMin - 5', 'dataMax + 5']} />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fontSize: 10, fill: '#6b7280' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  hide 
+                  domain={['dataMin - 5', 'dataMax + 5']} 
+                />
                 <Tooltip 
-                  contentStyle={{ textAlign: 'right', direction: 'rtl' }}
+                  contentStyle={{ 
+                    textAlign: 'right', 
+                    direction: 'rtl',
+                    backgroundColor: '#f9fafb',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
+                  }}
+                  formatter={(value: number, name: string, props: any) => [
+                    `${value.toFixed(1)}%`,
+                    'النمو'
+                  ]}
+                  labelFormatter={(label: string, payload: any) => {
+                    if (payload && payload[0] && payload[0].payload.date) {
+                      return `${label} - ${payload[0].payload.date}`;
+                    }
+                    return label;
+                  }}
                 />
                 <Area 
                   type="monotone" 
