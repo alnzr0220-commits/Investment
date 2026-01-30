@@ -32,18 +32,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     e.preventDefault();
     setError('');
     
-    // Check if admin login
+    // Check if admin login first (before any validation)
     if (checkAdminMode(fullName, phoneNumber)) {
       // Admin login
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-        navigate('/admin/dashboard');
+        // Navigate to admin dashboard (use the correct route)
+        navigate('/admin');
       }, 1000);
       return;
     }
 
-    // Regular user validation
+    // Regular user validation (only if not admin)
     const nameParts = fullName.trim().split(/\s+/);
     if (nameParts.length < 2) {
       setError('الرجاء إدخال الاسم الأول واسم العائلة');

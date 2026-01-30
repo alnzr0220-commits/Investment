@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LoginPage } from './components/LoginPage';
 import { Dashboard } from './components/Dashboard';
-import { AdminLogin } from './components/AdminLogin';
-import { AdminDashboard } from './components/AdminDashboard';
+import { SimpleAdminDashboard } from './components/SimpleAdminDashboard';
 import { mockPortfolio } from './data/mockData';
 import { Subscriber, PortfolioData } from './types';
 import { api } from './api';
@@ -155,9 +154,9 @@ function App() {
           } />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin" element={<SimpleAdminDashboard />} />
+          <Route path="/admin/login" element={<SimpleAdminDashboard />} />
+          <Route path="/admin/dashboard" element={<SimpleAdminDashboard />} />
           <Route path="/admin/view/:id" element={<AdminUserView />} />
         </Routes>
       </div>
