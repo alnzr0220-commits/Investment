@@ -1,5 +1,8 @@
-// API URL for staging environment (updated v3)
+// API URL for staging environment (updated v4 - force rebuild)
 const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
+
+// Force rebuild timestamp - ensure latest changes are deployed
+console.log('🚀 API Module loaded - Version 4 - 2025-01-31 - All 8 companies with correct data');
 
 // Data source URLs - Multiple approaches for Google Sheets
 const SHEET_ID = '1bZau5OniYiDK6jLf7kYwkAoSWiO9PNqCMrCY2u3Ryus';
