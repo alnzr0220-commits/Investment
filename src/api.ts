@@ -2,6 +2,7 @@
 const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
 
 // Google Sheets CSV URLs
+const MAIN_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv';
 const SUBSCRIBERS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?gid=0&single=true&output=csv';
 const PORTFOLIO_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?gid=1614954373&single=true&output=csv';
 
@@ -45,7 +46,17 @@ export const api = {
 
   async getAllSubscribers() {
     try {
-      // Get from Google Sheets (Subscribers sheet)
+      // Try main sheet first
+      const mainResponse = await fetch(MAIN_SHEET_URL);
+      if (mainResponse.ok) {
+        const csvText = await mainResponse.text();
+        const result = this.parseCSVToSubscribers(csvText);
+        if (result.length > 0) {
+          return result;
+        }
+      }
+      
+      // Try specific subscribers sheet
       const response = await fetch(SUBSCRIBERS_SHEET_URL);
       if (response.ok) {
         const csvText = await response.text();
@@ -63,7 +74,17 @@ export const api = {
 
   async getPortfolio() {
     try {
-      // Get from Google Sheets (Portfolio sheet)
+      // Try main sheet first
+      const mainResponse = await fetch(MAIN_SHEET_URL);
+      if (mainResponse.ok) {
+        const csvText = await mainResponse.text();
+        const result = this.parseCSVToPortfolio(csvText);
+        if (result.items.length > 0) {
+          return result;
+        }
+      }
+      
+      // Try specific portfolio sheet
       const response = await fetch(PORTFOLIO_SHEET_URL);
       if (response.ok) {
         const csvText = await response.text();
