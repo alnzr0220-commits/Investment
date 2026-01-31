@@ -77,173 +77,590 @@ export const api = {
   },
 
   async getAllSubscribers() {
-    // For now, always return sample data to ensure it displays immediately
-    console.log('📋 Using sample subscribers data (Google Sheets integration temporarily disabled)');
-    return this.getSampleSubscribersData();
+    console.log('📋 Loading subscribers data from Google Sheets...');
+    
+    try {
+      // محاولة جلب البيانات من Google Sheets أولاً
+      const response = await fetchWithTimeout(SUBSCRIBERS_DATA_URL);
+      if (response.ok) {
+        const csvText = await response.text();
+        console.log('Subscribers CSV response:', csvText.substring(0, 300));
+        
+        if (csvText.length > 200 && !csvText.includes('بيانات المشتركين بالصندوق المستقبل')) {
+          const result = this.parseCSVToSubscribers(csvText);
+          if (result.length > 0) {
+            console.log('✅ Successfully loaded subscribers from Google Sheets!');
+            return result;
+          }
+        }
+      }
+
+      // محاولة TSV format
+      const tsvResponse = await fetchWithTimeout(ALT_SUBSCRIBERS_URL);
+      if (tsvResponse.ok) {
+        const tsvText = await tsvResponse.text();
+        console.log('Subscribers TSV response:', tsvText.substring(0, 300));
+        
+        if (tsvText.length > 200) {
+          const result = this.parseCSVToSubscribers(tsvText.replace(/\t/g, ','));
+          if (result.length > 0) {
+            console.log('✅ Successfully loaded subscribers from TSV!');
+            return result;
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to fetch subscribers from Google Sheets:', error);
+    }
+    
+    // البيانات الاحتياطية من الورك شيت (آخر نسخة محدثة)
+    console.log('📋 Using backup subscribers data from worksheet...');
+    return this.getUpdatedSubscribersData();
   },
 
-  getSampleSubscribersData() {
+  getUpdatedSubscribersData() {
     return [
       {
         subscriberNumber: '1',
         fullName: 'محمد عبد القادر',
         phoneNumber: '534000223',
-        sharesCount: 40,
-        totalSavings: 168300,
-        monthlyPayment: 2000,
+        sharesCount: 24,
+        totalSavings: 21600,
+        monthlyPayment: 1200,
         baseShareValue: 900,
-        currentShareValue: 943.56,
-        realPortfolioValue: 37742.22,
-        ownershipPercentage: 4.9,
-        growthPercentage: 19.70,
-        totalIncome: 37742.22,
+        currentShareValue: 950,
+        realPortfolioValue: 22800,
+        ownershipPercentage: 20.49,
+        growthPercentage: 4.5,
+        totalIncome: 22800,
       },
       {
         subscriberNumber: '2',
         fullName: 'خالد الحربي',
         phoneNumber: '504906091',
-        sharesCount: 24,
-        totalSavings: 62647.73,
-        monthlyPayment: 1200,
+        sharesCount: 5,
+        totalSavings: 4000,
+        monthlyPayment: 1000,
         baseShareValue: 900,
-        currentShareValue: 943.56,
-        realPortfolioValue: 22647.73,
-        ownershipPercentage: 4.9,
-        growthPercentage: 11.82,
-        totalIncome: 22647.73,
+        currentShareValue: 950,
+        realPortfolioValue: 4750,
+        ownershipPercentage: 9.76,
+        growthPercentage: 4.5,
+        totalIncome: 4750,
       },
       {
         subscriberNumber: '3',
         fullName: 'سعد عبد الله',
         phoneNumber: '545473331',
-        sharesCount: 5,
-        totalSavings: 14718.26,
-        monthlyPayment: 1000,
+        sharesCount: 15,
+        totalSavings: 13500,
+        monthlyPayment: 750,
         baseShareValue: 900,
-        currentShareValue: 943.56,
-        realPortfolioValue: 4718.26,
-        ownershipPercentage: 4.9,
-        growthPercentage: 9.86,
-        totalIncome: 4718.26,
+        currentShareValue: 950,
+        realPortfolioValue: 14250,
+        ownershipPercentage: 7.32,
+        growthPercentage: 4.5,
+        totalIncome: 14250,
+      },
+      {
+        subscriberNumber: '4',
+        fullName: 'يوسف أحمد السحيمي',
+        phoneNumber: '560090953',
+        sharesCount: 10,
+        totalSavings: 9000,
+        monthlyPayment: 500,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 9500,
+        ownershipPercentage: 4.88,
+        growthPercentage: 4.5,
+        totalIncome: 9500,
+      },
+      {
+        subscriberNumber: '5',
+        fullName: 'علي طالب الزهراني',
+        phoneNumber: '551567697',
+        sharesCount: 10,
+        totalSavings: 9000,
+        monthlyPayment: 500,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 9500,
+        ownershipPercentage: 4.88,
+        growthPercentage: 4.5,
+        totalIncome: 9500,
+      },
+      {
+        subscriberNumber: '6',
+        fullName: 'سعد عبد الله',
+        phoneNumber: '551679520',
+        sharesCount: 10,
+        totalSavings: 9000,
+        monthlyPayment: 500,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 9500,
+        ownershipPercentage: 4.88,
+        growthPercentage: 4.5,
+        totalIncome: 9500,
+      },
+      {
+        subscriberNumber: '7',
+        fullName: 'عبد الله أحمد المحيميد علي',
+        phoneNumber: '561930452',
+        sharesCount: 10,
+        totalSavings: 9000,
+        monthlyPayment: 500,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 9500,
+        ownershipPercentage: 4.88,
+        growthPercentage: 4.5,
+        totalIncome: 9500,
+      },
+      {
+        subscriberNumber: '8',
+        fullName: 'سعد عبد الله أحمد المحيميد',
+        phoneNumber: '582299942',
+        sharesCount: 10,
+        totalSavings: 9000,
+        monthlyPayment: 500,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 9500,
+        ownershipPercentage: 4.88,
+        growthPercentage: 4.5,
+        totalIncome: 9500,
+      },
+      {
+        subscriberNumber: '9',
+        fullName: 'علي عبد الله الشيخ',
+        phoneNumber: '550978601',
+        sharesCount: 7,
+        totalSavings: 6300,
+        monthlyPayment: 350,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 6650,
+        ownershipPercentage: 3.41,
+        growthPercentage: 4.5,
+        totalIncome: 6650,
+      },
+      {
+        subscriberNumber: '10',
+        fullName: 'سعود محمد الحوراني',
+        phoneNumber: '537926814',
+        sharesCount: 6,
+        totalSavings: 5400,
+        monthlyPayment: 300,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 5700,
+        ownershipPercentage: 2.93,
+        growthPercentage: 4.5,
+        totalIncome: 5700,
+      },
+      {
+        subscriberNumber: '11',
+        fullName: 'محمد عبد الله',
+        phoneNumber: '500394798',
+        sharesCount: 6,
+        totalSavings: 5400,
+        monthlyPayment: 300,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 5700,
+        ownershipPercentage: 2.93,
+        growthPercentage: 4.5,
+        totalIncome: 5700,
+      },
+      {
+        subscriberNumber: '12',
+        fullName: 'كاسر جاسم الزهراني',
+        phoneNumber: '567935956',
+        sharesCount: 4,
+        totalSavings: 3600,
+        monthlyPayment: 200,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 3800,
+        ownershipPercentage: 1.95,
+        growthPercentage: 4.5,
+        totalIncome: 3800,
+      },
+      {
+        subscriberNumber: '13',
+        fullName: 'عبد الله محمد',
+        phoneNumber: '500895023',
+        sharesCount: 4,
+        totalSavings: 3600,
+        monthlyPayment: 200,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 3800,
+        ownershipPercentage: 1.95,
+        growthPercentage: 4.5,
+        totalIncome: 3800,
+      },
+      {
+        subscriberNumber: '14',
+        fullName: 'محمد جاسم الزهراني',
+        phoneNumber: '569373888',
+        sharesCount: 4,
+        totalSavings: 3050,
+        monthlyPayment: 200,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 3800,
+        ownershipPercentage: 1.95,
+        growthPercentage: 4.5,
+        totalIncome: 3800,
+      },
+      {
+        subscriberNumber: '15',
+        fullName: 'سعد عبد الله',
+        phoneNumber: '569241338',
+        sharesCount: 6,
+        totalSavings: 5400,
+        monthlyPayment: 300,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 5700,
+        ownershipPercentage: 2.93,
+        growthPercentage: 4.5,
+        totalIncome: 5700,
+      },
+      {
+        subscriberNumber: '16',
+        fullName: 'زياد الزهراني',
+        phoneNumber: '552657630',
+        sharesCount: 3,
+        totalSavings: 2700,
+        monthlyPayment: 150,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 2850,
+        ownershipPercentage: 1.46,
+        growthPercentage: 4.5,
+        totalIncome: 2850,
+      },
+      {
+        subscriberNumber: '17',
+        fullName: 'مريم الزهراني',
+        phoneNumber: '551257703',
+        sharesCount: 3,
+        totalSavings: 2700,
+        monthlyPayment: 150,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 2850,
+        ownershipPercentage: 1.46,
+        growthPercentage: 4.5,
+        totalIncome: 2850,
+      },
+      {
+        subscriberNumber: '18',
+        fullName: 'سعد الشلاحي',
+        phoneNumber: '562087772',
+        sharesCount: 3,
+        totalSavings: 2700,
+        monthlyPayment: 150,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 2850,
+        ownershipPercentage: 1.46,
+        growthPercentage: 4.5,
+        totalIncome: 2850,
+      },
+      {
+        subscriberNumber: '19',
+        fullName: 'جبران الشلاحي',
+        phoneNumber: '542626031',
+        sharesCount: 3,
+        totalSavings: 2850,
+        monthlyPayment: 150,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 2850,
+        ownershipPercentage: 1.46,
+        growthPercentage: 4.5,
+        totalIncome: 2850,
+      },
+      {
+        subscriberNumber: '20',
+        fullName: 'زياد الشهيب',
+        phoneNumber: '537926876',
+        sharesCount: 3,
+        totalSavings: 2700,
+        monthlyPayment: 150,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 2850,
+        ownershipPercentage: 1.46,
+        growthPercentage: 4.5,
+        totalIncome: 2850,
+      },
+      {
+        subscriberNumber: '21',
+        fullName: 'أحمد طاهر الشلاحي',
+        phoneNumber: '564519351',
+        sharesCount: 3,
+        totalSavings: 2700,
+        monthlyPayment: 150,
+        baseShareValue: 900,
+        currentShareValue: 950,
+        realPortfolioValue: 2850,
+        ownershipPercentage: 1.46,
+        growthPercentage: 4.5,
+        totalIncome: 2850,
       }
     ];
   },
 
-  async getPortfolio() {
-    console.log('📋 Loading portfolio data...');
+  parseCSVToSubscribers(csvText: string) {
+    const lines = csvText.split('\n').filter(line => line.trim());
+    const subscribers = [];
+
+    console.log('Raw CSV data for subscribers:', csvText.substring(0, 500));
+
+    // Skip header row and process data
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      
+      if (values.length >= 6 && values[0] && !values[0].toLowerCase().includes('بيانات')) {
+        try {
+          const subscriber = {
+            subscriberNumber: values[0] || '',
+            fullName: values[1] || '',
+            phoneNumber: values[2] || '',
+            sharesCount: parseFloat(values[3]) || 0,
+            totalSavings: this.parseSARValue(values[4]) || 0,
+            monthlyPayment: this.parseSARValue(values[5]) || 0,
+            baseShareValue: this.parseSARValue(values[6]) || 0,
+            currentShareValue: this.parseSARValue(values[7]) || 0,
+            realPortfolioValue: this.parseSARValue(values[8]) || 0,
+            ownershipPercentage: parseFloat(values[9]?.replace('%', '')) || 0,
+            growthPercentage: parseFloat(values[10]?.replace('%', '')) || 0,
+            totalIncome: this.parseSARValue(values[8]) || 0,
+          };
+          
+          if (subscriber.fullName && subscriber.subscriberNumber) {
+            subscribers.push(subscriber);
+          }
+        } catch (error) {
+          console.warn(`Error parsing subscriber row ${i}:`, error);
+        }
+      }
+    }
     
-    // البيانات الفعلية من الورك شيت - الورقة الثانية
+    console.log(`Subscribers data loaded: ${subscribers.length} subscribers found`);
+    return subscribers;
+  },
+
+  parseSARValue(value: string): number {
+    if (!value) return 0;
+    // Remove SAR, commas, and other non-numeric characters except decimal point
+    const cleanValue = value.toString().replace(/[^\d.-]/g, '');
+    return parseFloat(cleanValue) || 0;
+  },
+
+  async getPortfolio() {
+    console.log('📋 Loading portfolio data from Google Sheets...');
+    
+    try {
+      // محاولة جلب البيانات من Google Sheets أولاً
+      const response = await fetchWithTimeout(PORTFOLIO_DATA_URL);
+      if (response.ok) {
+        const csvText = await response.text();
+        console.log('Portfolio CSV response:', csvText.substring(0, 300));
+        
+        if (csvText.length > 200 && !csvText.includes('بيانات المشتركين بالصندوق المستقبل')) {
+          const result = this.parseCSVToPortfolio(csvText);
+          if (result.items.length > 0) {
+            console.log('✅ Successfully loaded portfolio from Google Sheets!');
+            return result;
+          }
+        }
+      }
+
+      // محاولة TSV format
+      const tsvResponse = await fetchWithTimeout(ALT_PORTFOLIO_URL);
+      if (tsvResponse.ok) {
+        const tsvText = await tsvResponse.text();
+        console.log('Portfolio TSV response:', tsvText.substring(0, 300));
+        
+        if (tsvText.length > 200) {
+          const result = this.parseCSVToPortfolio(tsvText.replace(/\t/g, ','));
+          if (result.items.length > 0) {
+            console.log('✅ Successfully loaded portfolio from TSV!');
+            return result;
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to fetch portfolio from Google Sheets:', error);
+    }
+    
+    // البيانات الاحتياطية من الورك شيت (آخر نسخة محدثة)
+    console.log('📋 Using backup data from worksheet...');
     const portfolioData = {
       items: [
         {
           companyName: 'يغطي الأسهم الامريكية الكبرى (S&P500)',
           assetSymbol: 'SPUS',
           units: 257,
-          marketPrice: 52.19,
-          averagePrice: 48.50,
-          baseCost: 12464.50,
-          marketValueUSD: 13412.83,
-          totalValueUSD: 13412.83,
-          unrealizedProfitLoss: 948.33,
-          totalValueSAR: 50298.11,
-          growth: 7.6,
+          marketPrice: 51.46,
+          averagePrice: 45.27,
+          baseCost: 11601,
+          marketValueUSD: 13225.22,
+          totalValueUSD: 13225.22,
+          unrealizedProfitLoss: 1624.22,
+          totalValueSAR: 49594.58,
+          growth: 14.0,
         },
         {
           companyName: 'يغطي قطاع التكنلوجيا العالمي (بمافيه أمريكيا)',
           assetSymbol: 'SPTE',
           units: 109,
-          marketPrice: 38.13,
-          averagePrice: 34.20,
-          baseCost: 3727.80,
-          marketValueUSD: 4156.17,
-          totalValueUSD: 4156.17,
-          unrealizedProfitLoss: 428.37,
-          totalValueSAR: 15585.64,
-          growth: 11.5,
+          marketPrice: 36.73,
+          averagePrice: 35.29,
+          baseCost: 3846,
+          marketValueUSD: 4003.57,
+          totalValueUSD: 4003.57,
+          unrealizedProfitLoss: 157.57,
+          totalValueSAR: 15013.39,
+          growth: 4.1,
         },
         {
           companyName: 'الأسواق المتقدمة والناشئة بإستثناء أمريكا',
           assetSymbol: 'SPWO',
-          units: 85,
+          units: 4,
           marketPrice: 29.31,
-          averagePrice: 30.15,
-          baseCost: 2562.75,
-          marketValueUSD: 2491.35,
-          totalValueUSD: 2491.35,
-          unrealizedProfitLoss: -71.40,
-          totalValueSAR: 9342.56,
-          growth: -2.8,
+          averagePrice: 29.87,
+          baseCost: 131,
+          marketValueUSD: 117.24,
+          totalValueUSD: 117.24,
+          unrealizedProfitLoss: -13.76,
+          totalValueSAR: 439.65,
+          growth: -10.5,
         },
         {
           companyName: 'البيتكوين',
           assetSymbol: 'IBIT',
-          units: 41,
+          units: 46,
           marketPrice: 47.49,
-          averagePrice: 42.80,
-          baseCost: 1754.80,
-          marketValueUSD: 1947.09,
-          totalValueUSD: 1947.09,
-          unrealizedProfitLoss: 192.29,
-          totalValueSAR: 7301.59,
-          growth: 11.0,
+          averagePrice: 54.55,
+          baseCost: 2534,
+          marketValueUSD: 2184.54,
+          totalValueUSD: 2184.54,
+          unrealizedProfitLoss: -349.46,
+          totalValueSAR: 8192.03,
+          growth: -13.8,
         },
         {
           companyName: 'ذهب',
           assetSymbol: 'GLDM',
-          units: 32,
+          units: 19,
           marketPrice: 96.01,
-          averagePrice: 98.50,
-          baseCost: 3152.00,
-          marketValueUSD: 3072.32,
-          totalValueUSD: 3072.32,
-          unrealizedProfitLoss: -79.68,
-          totalValueSAR: 11521.20,
-          growth: -2.5,
+          averagePrice: 104.37,
+          baseCost: 2000,
+          marketValueUSD: 1824.19,
+          totalValueUSD: 1824.19,
+          unrealizedProfitLoss: -175.81,
+          totalValueSAR: 6840.71,
+          growth: -8.8,
         },
         {
           companyName: 'صكوك',
-          assetSymbol: 'SUKUK',
-          units: 150,
-          marketPrice: 102.50,
-          averagePrice: 100.00,
-          baseCost: 15000.00,
-          marketValueUSD: 15375.00,
-          totalValueUSD: 15375.00,
-          unrealizedProfitLoss: 375.00,
-          totalValueSAR: 57656.25,
-          growth: 2.5,
+          assetSymbol: 'Deeds',
+          units: 50,
+          marketPrice: 0,
+          averagePrice: 0,
+          baseCost: 54000,
+          marketValueUSD: 55567,
+          totalValueUSD: 55567,
+          unrealizedProfitLoss: 1567,
+          totalValueSAR: 58467,
+          growth: 2.9,
         },
         {
           companyName: 'صندوق معايير للقروض',
-          assetSymbol: 'LOAN',
-          units: 200,
-          marketPrice: 52.75,
-          averagePrice: 51.20,
-          baseCost: 10240.00,
-          marketValueUSD: 10550.00,
-          totalValueUSD: 10550.00,
-          unrealizedProfitLoss: 310.00,
-          totalValueSAR: 39562.50,
-          growth: 3.0,
+          assetSymbol: 'Loan Fund',
+          units: 0,
+          marketPrice: 0,
+          averagePrice: 0,
+          baseCost: 38000,
+          marketValueUSD: 40119,
+          totalValueUSD: 40119,
+          unrealizedProfitLoss: 2119,
+          totalValueSAR: 40119,
+          growth: 5.6,
         },
         {
           companyName: 'وديعة بنكية',
           assetSymbol: 'DEPOSIT',
-          units: 1,
-          marketPrice: 6000.00,
-          averagePrice: 6000.00,
-          baseCost: 6000.00,
-          marketValueUSD: 6000.00,
-          totalValueUSD: 6000.00,
-          unrealizedProfitLoss: 0.00,
-          totalValueSAR: 9880.00,
+          units: 0,
+          marketPrice: 0,
+          averagePrice: 0,
+          baseCost: 0,
+          marketValueUSD: 6800,
+          totalValueUSD: 6800,
+          unrealizedProfitLoss: 0,
+          totalValueSAR: 6800,
           growth: 0.0,
         }
       ],
-      totalPortfolioValue: 201147.85
+      totalPortfolioValue: 185466.35
     };
     
     console.log('✅ Portfolio loaded - Items:', portfolioData.items.length, 'Total:', portfolioData.totalPortfolioValue);
     return portfolioData;
-  }
+  },
+
+  parseCSVToPortfolio(csvText: string) {
+    const lines = csvText.split('\n').filter(line => line.trim());
+    const items = [];
+    let totalValue = 0;
+
+    console.log('Raw CSV data for portfolio:', csvText.substring(0, 500));
+
+    // Skip header row and process data
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      
+      if (values.length >= 6 && values[0] && !values[0].toLowerCase().includes('بيانات')) {
+        try {
+          const item = {
+            companyName: values[0] || '',
+            assetSymbol: values[1] || '',
+            units: parseFloat(values[2]) || 0,
+            marketPrice: parseFloat(values[3]) || 0,
+            totalValueUSD: parseFloat(values[4]) || 0,
+            totalValueSAR: parseFloat(values[5]) || 0,
+            growth: parseFloat(values[6]) || 0,
+          };
+          
+          if (item.companyName && item.totalValueSAR > 0) {
+            items.push(item);
+            totalValue += item.totalValueSAR;
+          }
+        } catch (error) {
+          console.warn(`Error parsing portfolio row ${i}:`, error);
+        }
+      }
+    }
+    
+    console.log(`Portfolio data loaded: ${items.length} items found, total: ${totalValue}`);
+    
+    return {
+      items,
+      totalPortfolioValue: totalValue
+    };
+  },
 };
