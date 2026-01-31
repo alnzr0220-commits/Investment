@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Subscriber, PortfolioData } from '../types';
-import { SubscriberInfo } from './SubscriberInfo';
+import { FixedSubscriberInfo } from './FixedSubscriberInfo';
 import { PortfolioDetails } from './PortfolioDetails';
 import { ProfileCard } from './ProfileCard';
 import { LogOut } from 'lucide-react';
@@ -44,9 +44,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ subscriber, portfolio, onL
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Section 1: Subscriber Info */}
+        {/* Section 1: Fixed Subscriber Info */}
         <section>
-          <SubscriberInfo subscriber={currentSubscriber} />
+          <FixedSubscriberInfo />
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

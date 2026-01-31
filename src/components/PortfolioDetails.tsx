@@ -41,15 +41,95 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'year'>('month');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
-  // Check if we have any data
-  const hasData = data.items && data.items.length > 0;
+  // البيانات الثابتة من الورك شيت - 8 شركات كاملة
+  const portfolioData = {
+    items: [
+      {
+        companyName: 'يغطي الأسهم الامريكية الكبرى (S&P500)',
+        assetSymbol: 'SPUS',
+        units: 257,
+        marketPrice: 51.46,
+        totalValueUSD: 13225.22,
+        totalValueSAR: 49594.58,
+        growth: 14.0,
+      },
+      {
+        companyName: 'يغطي قطاع التكنلوجيا العالمي (بمافيه أمريكيا)',
+        assetSymbol: 'SPTE',
+        units: 109,
+        marketPrice: 36.73,
+        totalValueUSD: 4003.57,
+        totalValueSAR: 15013.39,
+        growth: 4.4,
+      },
+      {
+        companyName: 'الأسواق المتقدمة والناشئة بإستثناء أمريكا',
+        assetSymbol: 'SPWO',
+        units: 4,
+        marketPrice: 29.31,
+        totalValueUSD: 117.24,
+        totalValueSAR: 439.65,
+        growth: -10.5,
+      },
+      {
+        companyName: 'البيتكوين',
+        assetSymbol: 'IBIT',
+        units: 46,
+        marketPrice: 47.49,
+        totalValueUSD: 2184.54,
+        totalValueSAR: 8192.03,
+        growth: -13.8,
+      },
+      {
+        companyName: 'ذهب',
+        assetSymbol: 'GLDM',
+        units: 19,
+        marketPrice: 96.01,
+        totalValueUSD: 1824.19,
+        totalValueSAR: 6840.71,
+        growth: -8.8,
+      },
+      {
+        companyName: 'صكوك',
+        assetSymbol: 'Deeds',
+        units: 50,
+        marketPrice: 1113.34,
+        totalValueUSD: 55667,
+        totalValueSAR: 58467.00,
+        growth: 3.1,
+      },
+      {
+        companyName: 'صندوق معايير للقروض',
+        assetSymbol: 'Loan Fund',
+        units: 1,
+        marketPrice: 40119.00,
+        totalValueUSD: 40119,
+        totalValueSAR: 40119.00,
+        growth: 5.6,
+      },
+      {
+        companyName: 'وديعة بنكية',
+        assetSymbol: 'DEPOSIT',
+        units: 1,
+        marketPrice: 6800.00,
+        totalValueUSD: 6800,
+        totalValueSAR: 6800.00,
+        growth: 0.0,
+      }
+    ],
+    totalPortfolioValue: 185466.35
+  };
 
-  const chartData = hasData ? data.items.map(item => ({
+  // استخدام البيانات الثابتة دائماً
+  const actualData = portfolioData;
+  const hasData = actualData.items && actualData.items.length > 0;
+
+  const chartData = hasData ? actualData.items.map(item => ({
     name: item.companyName,
     value: item.totalValueSAR
   })) : [];
 
-  const selectedItem = selectedCompany ? data.items.find(i => i.companyName === selectedCompany) : null;
+  const selectedItem = selectedCompany ? actualData.items.find(i => i.companyName === selectedCompany) : null;
   // Use item growth if available, otherwise default to 0
   const growthValue = selectedItem?.growth ?? 0; 
   const isPositive = growthValue >= 0;
@@ -114,7 +194,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {data.items.map((item, index) => (
+                {actualData.items.map((item, index) => (
                   <tr 
                     key={index} 
                     className={`transition-colors cursor-pointer ${selectedCompany === item.companyName ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
@@ -135,7 +215,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                   onClick={() => setSelectedCompany(null)}
                 >
                   <td colSpan={5} className="px-4 py-4 text-sm font-bold text-gray-900 text-left pl-8">إجمالي قيمة المحفظة</td>
-                  <td className="px-4 py-4 whitespace-nowrap text-lg font-bold text-primary-700">{data.totalPortfolioValue.toLocaleString()} ر.س</td>
+                  <td className="px-4 py-4 whitespace-nowrap text-lg font-bold text-primary-700">{actualData.totalPortfolioValue.toLocaleString()} ر.س</td>
                 </tr>
               </tfoot>
             </table>
