@@ -1,0 +1,2 @@
+Force rebuild timestamp: 2025-01-31 - Fix portfolio data and user ownership percentage
+This file forces Vercel to rebuild the application with latest changes.
