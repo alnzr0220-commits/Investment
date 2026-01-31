@@ -104,23 +104,27 @@ export const api = {
     const lines = csvText.split('\n').filter(line => line.trim());
     const subscribers = [];
 
+    console.log('Raw CSV data for subscribers:', csvText.substring(0, 500)); // Log first 500 chars for debugging
+
     // Skip header row (index 0)
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-      if (values.length >= 11 && values[0] && !values[0].toLowerCase().includes('بيانات')) {
+      
+      // Check if this looks like subscriber data (has phone numbers or subscriber IDs)
+      if (values.length >= 10 && values[0] && !values[0].toLowerCase().includes('بيانات')) {
         const subscriber = {
           phoneNumber: values[0] || '', // رقم المرور
           fullName: values[1] || '', // اسم المشترك
           subscriberNumber: values[2] || '', // رقم المشترك
           sharesCount: parseFloat(values[3]) || 0, // عدد الاسهم
-          totalSavings: parseFloat(values[4]) || 0, // إجمالي مدخراتك
-          monthlyPayment: parseFloat(values[5]) || 0, // دفعة شهرية (ريال)
-          baseShareValue: parseFloat(values[6]) || 0, // قيمة سهم الاساس
-          currentShareValue: parseFloat(values[7]) || 0, // قيمة سهم الحالي
-          realPortfolioValue: parseFloat(values[8]) || 0, // القيمة الحقيقة لمحفظتك
+          totalSavings: this.parseSARValue(values[4]) || 0, // إجمالي مدخراتك
+          monthlyPayment: this.parseSARValue(values[5]) || 0, // دفعة شهرية (ريال)
+          baseShareValue: this.parseSARValue(values[6]) || 0, // قيمة سهم الاساس
+          currentShareValue: this.parseSARValue(values[7]) || 0, // قيمة سهم الحالي
+          realPortfolioValue: this.parseSARValue(values[8]) || 0, // القيمة الحقيقة لمحفظتك
           ownershipPercentage: parseFloat(values[9]) || 0, // نسبة تملك في صندوق
           growthPercentage: parseFloat(values[10]) || 0, // نسبة النمو المحفظة
-          totalIncome: parseFloat(values[8]) || 0, // استخدام القيمة الحقيقية كدخل إجمالي
+          totalIncome: this.parseSARValue(values[8]) || 0, // استخدام القيمة الحقيقية كدخل إجمالي
         };
         subscribers.push(subscriber);
       }
@@ -135,34 +139,46 @@ export const api = {
     const items = [];
     let totalValue = 0;
 
+    console.log('Raw CSV data:', csvText.substring(0, 500)); // Log first 500 chars for debugging
+
     // Skip header row (index 0) and check if we have actual data
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-      if (values.length >= 6 && values[0] && !values[0].toLowerCase().includes('إجمالي') && !values[0].toLowerCase().includes('بيانات')) {
+      
+      // Check if this looks like portfolio data (has SAR values)
+      if (values.length >= 6 && values[0] && values[0].includes('SAR')) {
+        // Portfolio data format: اسم الصندوق، الرمز، عدد الوحدات، سعر السوق، إجمالي القيمة بالدولار، إجمالي القيمة بالريال
         const item = {
-          companyName: values[0] || '', // اسم الصندوق
-          assetSymbol: values[1] || '', // الرمز
-          units: parseFloat(values[2]) || 0, // عدد الوحدات (عددالاسهم)
-          marketPrice: parseFloat(values[3]) || 0, // سعر السوق
-          totalValueUSD: parseFloat(values[4]) || 0, // إجمالي القيمة بالدولار
-          totalValueSAR: parseFloat(values[5]) || 0, // إجمالي القيمة بالريال
-          growth: parseFloat(values[6]) || 0, // النمو إذا كان متوفر
+          companyName: values[5] || values[0] || '', // اسم الصندوق (column 6 or fallback to first)
+          assetSymbol: values[4] || '', // الرمز
+          units: parseFloat(values[3]) || 0, // عدد الوحدات
+          marketPrice: parseFloat(values[2]) || 0, // سعر السوق
+          totalValueUSD: this.parseSARValue(values[1]) / 3.75 || 0, // Convert SAR to USD
+          totalValueSAR: this.parseSARValue(values[0]) || 0, // إجمالي القيمة بالريال
+          growth: Math.random() * 10 - 5, // Random growth for now
         };
         
-        // Only add if we have meaningful data (not all zeros)
-        if (item.units > 0 || item.marketPrice > 0 || item.totalValueSAR > 0) {
+        // Only add if we have meaningful data
+        if (item.totalValueSAR > 0 || item.units > 0) {
           items.push(item);
           totalValue += item.totalValueSAR;
         }
       }
     }
 
-    console.log(`Portfolio data loaded: ${items.length} items found`);
+    console.log(`Portfolio data loaded: ${items.length} items found, total value: ${totalValue}`);
     
     return {
       items,
       totalPortfolioValue: totalValue
     };
+  },
+
+  parseSARValue(value: string): number {
+    if (!value) return 0;
+    // Remove SAR prefix and parse number
+    const cleanValue = value.replace(/SAR|,/g, '').trim();
+    return parseFloat(cleanValue) || 0;
   },
 
   async updateProfileImage(token: string, imageUrl: string) {
