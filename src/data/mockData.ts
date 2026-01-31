@@ -125,5 +125,5 @@ export const mockPortfolio: PortfolioData = {
       growth: 0.0,
     }
   ],
-  totalPortfolioValue: 201148.35
+  totalPortfolioValue: 201147.85
 };

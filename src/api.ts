@@ -240,7 +240,7 @@ export const api = {
           growth: 0.0,
         }
       ],
-      totalPortfolioValue: 201148.35
+      totalPortfolioValue: 201147.85
     };
     
     console.log('✅ Portfolio loaded - Items:', portfolioData.items.length, 'Total:', portfolioData.totalPortfolioValue);
