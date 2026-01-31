@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavig
 import { LoginPage } from './components/LoginPage';
 import { Dashboard } from './components/Dashboard';
 import { SimpleAdminDashboard } from './components/SimpleAdminDashboard';
-import { mockPortfolio } from './data/mockData';
 import { Subscriber, PortfolioData } from './types';
 import { api } from './api';
 import { ArrowRight } from 'lucide-react';
@@ -13,7 +12,7 @@ const AdminUserView = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const subscriber = location.state?.subscriber;
-  const [portfolio, setPortfolio] = useState<PortfolioData>(mockPortfolio);
+  const [portfolio, setPortfolio] = useState<PortfolioData>({ items: [], totalPortfolioValue: 0 });
 
   useEffect(() => {
     api.getPortfolio().then(data => setPortfolio(data)).catch(console.error);
@@ -67,7 +66,7 @@ const AdminUserView = () => {
 
 function App() {
   const [user, setUser] = useState<Subscriber | null>(null);
-  const [portfolio, setPortfolio] = useState<PortfolioData>(mockPortfolio);
+  const [portfolio, setPortfolio] = useState<PortfolioData>({ items: [], totalPortfolioValue: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
