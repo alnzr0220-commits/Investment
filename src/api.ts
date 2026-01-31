@@ -86,7 +86,7 @@ export const api = {
     // Skip header row (index 0)
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-      if (values.length >= 11 && values[0]) {
+      if (values.length >= 11 && values[0] && !values[0].toLowerCase().includes('بيانات')) {
         const subscriber = {
           phoneNumber: values[0] || '', // رقم المرور
           fullName: values[1] || '', // اسم المشترك
@@ -104,6 +104,8 @@ export const api = {
         subscribers.push(subscriber);
       }
     }
+    
+    console.log(`Subscribers data loaded: ${subscribers.length} subscribers found`);
     return subscribers;
   },
 
@@ -113,7 +115,6 @@ export const api = {
     let totalValue = 0;
 
     // Skip header row (index 0) and check if we have actual data
-    let hasValidData = false;
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
       if (values.length >= 6 && values[0] && !values[0].toLowerCase().includes('إجمالي') && !values[0].toLowerCase().includes('بيانات')) {
@@ -124,73 +125,19 @@ export const api = {
           marketPrice: parseFloat(values[3]) || 0, // سعر السوق
           totalValueUSD: parseFloat(values[4]) || 0, // إجمالي القيمة بالدولار
           totalValueSAR: parseFloat(values[5]) || 0, // إجمالي القيمة بالريال
-          growth: Math.random() * 20 - 10, // نمو عشوائي بين -10% و +10%
+          growth: parseFloat(values[6]) || 0, // النمو إذا كان متوفر
         };
         
         // Only add if we have meaningful data (not all zeros)
         if (item.units > 0 || item.marketPrice > 0 || item.totalValueSAR > 0) {
           items.push(item);
           totalValue += item.totalValueSAR;
-          hasValidData = true;
         }
       }
     }
 
-    // إذا لم نجد بيانات صحيحة، استخدم البيانات الوهمية الواقعية
-    if (!hasValidData || items.length === 0) {
-      console.log('No valid data found in portfolio sheet, using fallback data');
-      return {
-        items: [
-          {
-            companyName: 'صندوق الأسهم السعودية المتنوع',
-            assetSymbol: 'SAEF-001',
-            units: 1500,
-            marketPrice: 42.75,
-            totalValueUSD: 17100,
-            totalValueSAR: 64125,
-            growth: 8.2
-          },
-          {
-            companyName: 'صندوق الأسواق الناشئة',
-            assetSymbol: 'EMEF-002',
-            units: 1200,
-            marketPrice: 28.50,
-            totalValueUSD: 9120,
-            totalValueSAR: 34200,
-            growth: -1.8
-          },
-          {
-            companyName: 'صندوق التكنولوجيا والابتكار',
-            assetSymbol: 'TECH-003',
-            units: 800,
-            marketPrice: 65.25,
-            totalValueUSD: 13920,
-            totalValueSAR: 52200,
-            growth: 15.3
-          },
-          {
-            companyName: 'صندوق الطاقة المتجددة',
-            assetSymbol: 'RENEW-004',
-            units: 600,
-            marketPrice: 38.90,
-            totalValueUSD: 6224,
-            totalValueSAR: 23340,
-            growth: 6.7
-          },
-          {
-            companyName: 'صندوق الرعاية الصحية',
-            assetSymbol: 'HEALTH-005',
-            units: 900,
-            marketPrice: 31.80,
-            totalValueUSD: 7632,
-            totalValueSAR: 28620,
-            growth: 4.1
-          }
-        ],
-        totalPortfolioValue: 202485
-      };
-    }
-
+    console.log(`Portfolio data loaded: ${items.length} items found`);
+    
     return {
       items,
       totalPortfolioValue: totalValue
