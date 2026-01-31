@@ -189,14 +189,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </div>
             )}
 
-            {/* Admin hint */}
-            {!isAdminMode && (
-              <div className="text-center">
-                <p className="text-xs text-gray-500">
-                  للدخول كمدير، استخدم بيانات الإدمن المخصصة
-                </p>
-              </div>
-            )}
+            {/* Admin hint - REMOVED for security */}
 
             <div>
               <button

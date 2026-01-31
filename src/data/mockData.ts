@@ -21,21 +21,41 @@ export const mockSubscriber: Subscriber = {
 export const mockPortfolio: PortfolioData = {
   items: [
     {
-      companyName: 'أرامكو السعودية',
-      assetSymbol: '2222',
-      units: 500,
-      marketPrice: 32.5,
-      totalValueUSD: 4333.33,
-      totalValueSAR: 16250
+      companyName: 'صندوق الأسهم السعودية',
+      assetSymbol: 'SAEF',
+      units: 1200,
+      marketPrice: 45.50,
+      totalValueUSD: 14560,
+      totalValueSAR: 54600,
+      growth: 8.5
     },
     {
-      companyName: 'مصرف الراجحي',
-      assetSymbol: '1120',
-      units: 200,
-      marketPrice: 88.0,
-      totalValueUSD: 4693.33,
-      totalValueSAR: 17600
+      companyName: 'صندوق الأسواق الناشئة',
+      assetSymbol: 'EMEF',
+      units: 800,
+      marketPrice: 32.75,
+      totalValueUSD: 6986,
+      totalValueSAR: 26200,
+      growth: -2.3
+    },
+    {
+      companyName: 'صندوق التكنولوجيا',
+      assetSymbol: 'TECH',
+      units: 600,
+      marketPrice: 78.90,
+      totalValueUSD: 12616,
+      totalValueSAR: 47340,
+      growth: 12.7
+    },
+    {
+      companyName: 'صندوق الطاقة المتجددة',
+      assetSymbol: 'RENEW',
+      units: 400,
+      marketPrice: 55.25,
+      totalValueUSD: 5893,
+      totalValueSAR: 22100,
+      growth: 5.2
     }
   ],
-  totalPortfolioValue: 74200
+  totalPortfolioValue: 150240
 };
