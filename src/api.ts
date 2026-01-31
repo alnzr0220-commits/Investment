@@ -108,10 +108,18 @@ export const api = {
       return userData;
     }
 
-    // إذا لم توجد بيانات محلية، استخدم البيانات الافتراضية لجعفر
-    const defaultUser = this.getUpdatedSubscribersData()[0];
-    console.log('Using default user data for جعفر:', defaultUser);
-    return defaultUser;
+    // إذا لم توجد بيانات محلية، جرب العثور على المستخدم من قائمة المشتركين
+    try {
+      const subscribers = this.getUpdatedSubscribersData();
+      // محاولة العثور على المستخدم بناءً على token أو استخدام الأول كافتراضي
+      const user = subscribers[0]; // يمكن تحسين هذا لاحقاً للبحث بناءً على token
+      console.log('Using subscriber data:', user);
+      return user;
+    } catch (error) {
+      console.error('Error getting user data:', error);
+      // البيانات الافتراضية لجعفر في حالة الفشل
+      return this.getUpdatedSubscribersData()[0];
+    }
   },
 
   async saveConfig(sheetUrl: string) {

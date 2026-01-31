@@ -1,20 +1,25 @@
 import React from 'react';
 import { Hash, Activity, PiggyBank, CreditCard, Wallet, TrendingUp, DollarSign, Percent } from 'lucide-react';
+import { Subscriber } from '../types';
 
-export const FixedSubscriberInfo: React.FC = () => {
-  // البيانات الثابتة الصحيحة لجعفر طاهر الزبر من الورك شيت
+interface FixedSubscriberInfoProps {
+  subscriber: Subscriber;
+}
+
+export const FixedSubscriberInfo: React.FC<FixedSubscriberInfoProps> = ({ subscriber }) => {
+  // استخدام بيانات المستخدم الممررة، مع التأكد من الأرقام الصحيحة
   const subscriberData = {
-    subscriberNumber: '1',
-    fullName: 'جعفر طاهر الزبر',
-    phoneNumber: '534000223',
-    sharesCount: 42,
-    totalSavings: 38100,
-    monthlyPayment: 2100,
-    baseShareValue: 900,
-    currentShareValue: 950,
-    realPortfolioValue: 38090.89,
-    ownershipPercentage: 20.49,
-    growthPercentage: 4.5,
+    subscriberNumber: subscriber.subscriberNumber || '1',
+    fullName: subscriber.fullName || 'مستخدم',
+    phoneNumber: subscriber.phoneNumber || '',
+    sharesCount: subscriber.sharesCount || 0,
+    totalSavings: subscriber.totalSavings || 0,
+    monthlyPayment: subscriber.monthlyPayment || 0,
+    baseShareValue: subscriber.baseShareValue || 900,
+    currentShareValue: subscriber.currentShareValue || 950,
+    realPortfolioValue: subscriber.realPortfolioValue || 0,
+    ownershipPercentage: subscriber.ownershipPercentage || 0,
+    growthPercentage: subscriber.growthPercentage || 4.5,
   };
 
   const infoItems = [
