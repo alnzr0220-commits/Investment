@@ -117,7 +117,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         growth: 0.0,
       }
     ],
-    totalPortfolioValue: 172315.92
+    totalPortfolioValue: 185466.35
   };
   
   console.log('📊 PortfolioDetails - Data received:', data);

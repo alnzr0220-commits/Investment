@@ -215,7 +215,7 @@ function App() {
               growth: 0.0,
             }
           ],
-          totalPortfolioValue: 172315.92
+          totalPortfolioValue: 185466.35
         };
         console.log('🔄 App: Using backup portfolio data:', backupData);
         console.log('🔄 App: Backup items count:', backupData.items.length);
