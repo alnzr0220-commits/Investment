@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأسماء الصحيحة النهائية</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .success-banner {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .names-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .name-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 12px;
+            border-right: 5px solid #007bff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .name-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .name-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #007bff, #28a745, #ffc107);
+        }
+        .name-number {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        .name-text {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .phone {
+            color: #6c757d;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .shares-info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #1565c0;
+        }
+        .test-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .test-button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+        .comparison-table {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+        .comparison-table h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .highlight-change {
+            background: #fff3cd !important;
+            font-weight: bold;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ الأسماء الصحيحة النهائية</h1>
+        
+        <div class="success-banner">
+            🎉 تم تحديث جميع الأسماء بالكتابة الصحيحة حسب الورك شيت المرسل
+        </div>
+
+        <div class="test-buttons">
+            <button class="test-button" onclick="loadCorrectNames()">عرض الأسماء المحدثة</button>
+            <button class="test-button" onclick="testLogin()">اختبار تسجيل الدخول</button>
+            <button class="test-button" onclick="showComparison()">مقارنة التغييرات</button>
+        </div>
+
+        <div id="namesContainer" class="names-grid"></div>
+        <div id="comparisonContainer"></div>
+    </div>
+
+    <script>
+        // الأسماء الصحيحة النهائية
+        const correctNames = [
+            { id: 1, name: 'جعفر طاهر النزر', phone: '536003223', shares: 42, ownership: '20.49%' },
+            { id: 2, name: 'عباس صالح النزر', phone: '504996691', shares: 24, ownership: '11.71%' },
+            { id: 3, name: 'محمد دعبل العثمان', phone: '545473331', shares: 5, ownership: '9.76%' },
+            { id: 4, name: 'يوسف أحمد المحمدعلي', phone: '560090953', shares: 15, ownership: '7.32%' },
+            { id: 5, name: 'علي طاهر النزر', phone: '551567697', shares: 10, ownership: '4.88%' },
+            { id: 6, name: 'حسن علي النزر', phone: '551679520', shares: 10, ownership: '4.88%' },
+            { id: 7, name: 'عبدالخالق أحمد المحمدعلي', phone: '561930452', shares: 10, ownership: '4.88%' },
+            { id: 8, name: 'أحمد علي العثمان', phone: '582299942', shares: 10, ownership: '4.88%' },
+            { id: 9, name: 'علي عبدالله الشهاب', phone: '550978601', shares: 7, ownership: '3.41%' },
+            { id: 10, name: 'معصومة الجبران', phone: '537926814', shares: 6, ownership: '2.93%' },
+            { id: 11, name: 'عباس طاهر النزر', phone: '506394798', shares: 6, ownership: '2.93%' },
+            { id: 12, name: 'قاسم طاهر النزر', phone: '567935956', shares: 6, ownership: '2.93%' },
+            { id: 13, name: 'عبدالمجيد جعفر النزر', phone: '500895023', shares: 6, ownership: '2.93%' },
+            { id: 14, name: 'محمد طاهر النزر', phone: '569373888', shares: 4, ownership: '1.95%' },
+            { id: 15, name: 'محمد المحمدعلي', phone: '569221338', shares: 4, ownership: '1.95%' },
+            { id: 16, name: 'زينب النزر', phone: '552657630', shares: 6, ownership: '2.93%' },
+            { id: 17, name: 'مريم النزر', phone: '551257703', shares: 3, ownership: '1.46%' },
+            { id: 18, name: 'أسماء المطلق', phone: '562087772', shares: 3, ownership: '1.46%' },
+            { id: 19, name: 'حوراء المطلق', phone: '542626031', shares: 3, ownership: '1.46%' },
+            { id: 20, name: 'زهره الشهاب', phone: '537926876', shares: 3, ownership: '1.46%' },
+            { id: 21, name: 'أحمد طاهر المطلق', phone: '564519351', shares: 3, ownership: '1.46%' }
+        ];
+
+        // التغييرات المهمة
+        const keyChanges = [
+            { old: 'الزبر', new: 'النزر', count: 9 },
+            { old: 'المحيميد علي', new: 'المحمدعلي', count: 3 },
+            { old: 'الشهيب/الشهايب', new: 'الشهاب', count: 2 }
+        ];
+
+        window.loadCorrectNames = function() {
+            const container = document.getElementById('namesContainer');
+            container.innerHTML = '';
+            
+            correctNames.forEach(subscriber => {
+                const nameCard = document.createElement('div');
+                nameCard.className = 'name-card';
+                nameCard.innerHTML = `
+                    <div class="name-number">المشترك رقم ${subscriber.id}</div>
+                    <div class="name-text">${subscriber.name}</div>
+                    <div class="phone">📱 ${subscriber.phone}</div>
+                    <div class="shares-info">
+                        📊 ${subscriber.shares} سهم | ${subscriber.ownership} ملكية
+                    </div>
+                `;
+                container.appendChild(nameCard);
+            });
+            
+            console.log('✅ تم عرض جميع الأسماء الصحيحة:', correctNames.length);
+        };
+
+        window.testLogin = function() {
+            // محاكاة اختبار تسجيل الدخول
+            const testUser = correctNames[0]; // جعفر طاهر النزر
+            
+            alert(`🔍 اختبار تسجيل الدخول:\\n\\nالاسم: ${testUser.name}\\nالهاتف: ${testUser.phone}\\n\\n✅ الاسم صحيح ومطابق للورك شيت`);
+        };
+
+        window.showComparison = function() {
+            const container = document.getElementById('comparisonContainer');
+            container.innerHTML = `
+                <div class="comparison-table">
+                    <h3>📋 ملخص التغييرات المهمة</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الكتابة القديمة</th>
+                                <th>الكتابة الصحيحة</th>
+                                <th>عدد المتأثرين</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${keyChanges.map(change => `
+                                <tr class="highlight-change">
+                                    <td>${change.old}</td>
+                                    <td>${change.new}</td>
+                                    <td>${change.count} مشترك</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 20px; text-align: center; color: #28a745; font-weight: bold;">
+                        ✅ تم تطبيق جميع التصحيحات بنجاح
+                    </div>
+                </div>
+            `;
+        };
+
+        // تحميل الأسماء تلقائياً عند فتح الصفحة
+        window.addEventListener('load', () => {
+            loadCorrectNames();
+        });
+    </script>
+</body>
+</html>

@@ -348,7 +348,7 @@ export const api = {
     return [
       {
         subscriberNumber: '1',
-        fullName: 'جعفر طاهر الزبر',
+        fullName: 'جعفر طاهر النزر',
         phoneNumber: '536003223',
         sharesCount: 42,
         totalSavings: 38100,
@@ -362,7 +362,7 @@ export const api = {
       },
       {
         subscriberNumber: '2',
-        fullName: 'عباس صالح الزبر',
+        fullName: 'عباس صالح النزر',
         phoneNumber: '504996691',
         sharesCount: 24,
         totalSavings: 21600,
@@ -390,7 +390,7 @@ export const api = {
       },
       {
         subscriberNumber: '4',
-        fullName: 'يوسف أحمد المحيميد علي',
+        fullName: 'يوسف أحمد المحمدعلي',
         phoneNumber: '560090953',
         sharesCount: 15,
         totalSavings: 13500,
@@ -404,7 +404,7 @@ export const api = {
       },
       {
         subscriberNumber: '5',
-        fullName: 'علي طاهر الزبر',
+        fullName: 'علي طاهر النزر',
         phoneNumber: '551567697',
         sharesCount: 10,
         totalSavings: 9000,
@@ -418,7 +418,7 @@ export const api = {
       },
       {
         subscriberNumber: '6',
-        fullName: 'حسن علي الزبر',
+        fullName: 'حسن علي النزر',
         phoneNumber: '551679520',
         sharesCount: 10,
         totalSavings: 9000,
@@ -432,7 +432,7 @@ export const api = {
       },
       {
         subscriberNumber: '7',
-        fullName: 'عبد الله أحمد المحيميد علي',
+        fullName: 'عبدالخالق أحمد المحمدعلي',
         phoneNumber: '561930452',
         sharesCount: 10,
         totalSavings: 9000,
@@ -446,7 +446,7 @@ export const api = {
       },
       {
         subscriberNumber: '8',
-        fullName: 'أحمد علي المحيميد',
+        fullName: 'أحمد علي العثمان',
         phoneNumber: '582299942',
         sharesCount: 10,
         totalSavings: 9000,
@@ -460,22 +460,8 @@ export const api = {
       },
       {
         subscriberNumber: '9',
-        fullName: 'أحمد علي المحيميد',
+        fullName: 'علي عبدالله الشهاب',
         phoneNumber: '550978601',
-        sharesCount: 10,
-        totalSavings: 9000,
-        monthlyPayment: 500,
-        baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 9069.26,
-        ownershipPercentage: 4.88,
-        growthPercentage: -4.5,
-        totalIncome: 9069.26,
-      },
-      {
-        subscriberNumber: '10',
-        fullName: 'علي عبد الله الشهيب',
-        phoneNumber: '537926814',
         sharesCount: 7,
         totalSavings: 6300,
         monthlyPayment: 350,
@@ -487,8 +473,22 @@ export const api = {
         totalIncome: 6348.48,
       },
       {
+        subscriberNumber: '10',
+        fullName: 'معصومة الجبران',
+        phoneNumber: '537926814',
+        sharesCount: 6,
+        totalSavings: 5400,
+        monthlyPayment: 300,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 5441.56,
+        ownershipPercentage: 2.93,
+        growthPercentage: -4.5,
+        totalIncome: 5441.56,
+      },
+      {
         subscriberNumber: '11',
-        fullName: 'مصطفى الحوراني',
+        fullName: 'عباس طاهر النزر',
         phoneNumber: '506394798',
         sharesCount: 6,
         totalSavings: 5400,
@@ -502,7 +502,7 @@ export const api = {
       },
       {
         subscriberNumber: '12',
-        fullName: 'فيصل طاهر الزبر',
+        fullName: 'قاسم طاهر النزر',
         phoneNumber: '567935956',
         sharesCount: 6,
         totalSavings: 5400,
@@ -516,7 +516,7 @@ export const api = {
       },
       {
         subscriberNumber: '13',
-        fullName: 'عبد الله محمد جعفر الزبر',
+        fullName: 'عبدالمجيد جعفر النزر',
         phoneNumber: '500895023',
         sharesCount: 6,
         totalSavings: 5400,
@@ -530,7 +530,7 @@ export const api = {
       },
       {
         subscriberNumber: '14',
-        fullName: 'محمد طاهر الزبر',
+        fullName: 'محمد طاهر النزر',
         phoneNumber: '569373888',
         sharesCount: 4,
         totalSavings: 3600,
@@ -544,7 +544,7 @@ export const api = {
       },
       {
         subscriberNumber: '15',
-        fullName: 'محمد المحيميد علي',
+        fullName: 'محمد المحمدعلي',
         phoneNumber: '569221338',
         sharesCount: 4,
         totalSavings: 3050,
@@ -558,7 +558,7 @@ export const api = {
       },
       {
         subscriberNumber: '16',
-        fullName: 'زياد الزبر',
+        fullName: 'زينب النزر',
         phoneNumber: '552657630',
         sharesCount: 6,
         totalSavings: 5400,
@@ -572,7 +572,7 @@ export const api = {
       },
       {
         subscriberNumber: '17',
-        fullName: 'مريم الزبر',
+        fullName: 'مريم النزر',
         phoneNumber: '551257703',
         sharesCount: 3,
         totalSavings: 2700,
@@ -586,7 +586,7 @@ export const api = {
       },
       {
         subscriberNumber: '18',
-        fullName: 'أسماء الشلاحي',
+        fullName: 'أسماء المطلق',
         phoneNumber: '562087772',
         sharesCount: 3,
         totalSavings: 2700,
@@ -600,7 +600,7 @@ export const api = {
       },
       {
         subscriberNumber: '19',
-        fullName: 'جوهرة الشلاحي',
+        fullName: 'حوراء المطلق',
         phoneNumber: '542626031',
         sharesCount: 3,
         totalSavings: 2700,
@@ -614,7 +614,7 @@ export const api = {
       },
       {
         subscriberNumber: '20',
-        fullName: 'زهرة الشهيب',
+        fullName: 'زهره الشهاب',
         phoneNumber: '537926876',
         sharesCount: 3,
         totalSavings: 2850,
@@ -628,7 +628,7 @@ export const api = {
       },
       {
         subscriberNumber: '21',
-        fullName: 'أحمد طاهر الشلاحي',
+        fullName: 'أحمد طاهر المطلق',
         phoneNumber: '564519351',
         sharesCount: 3,
         totalSavings: 2700,
