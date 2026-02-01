@@ -192,6 +192,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الوحدات</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">سعر السوق</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">القيمة ($)</th>
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ربح/خسارة غير محققة</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">القيمة (ر.س)</th>
                 </tr>
               </thead>
@@ -207,6 +208,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{item.units.toLocaleString()}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${item.marketPrice.toFixed(2)}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${item.totalValueUSD.toLocaleString()}</td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-bold ${item.unrealizedProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}">${item.unrealizedProfitLoss.toLocaleString()}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-bold text-primary-600">{item.totalValueSAR.toLocaleString()} ر.س</td>
                   </tr>
                 ))}
