@@ -149,49 +149,65 @@ export const api = {
       return { fullName: 'مدير النظام الرئيسي', phoneNumber: 'admin123', isAdmin: true };
     }
     
-    // استخدام البيانات المحلية المحدثة دائماً
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-      const userData = JSON.parse(currentUser);
-      console.log('📋 Found user in localStorage:', userData.fullName);
-      
-      // التحقق من أن البيانات محدثة - البحث في البيانات الحالية
-      const subscribers = this.getUpdatedSubscribersData();
-      const updatedUser = subscribers.find(sub => 
-        sub.fullName === userData.fullName && sub.phoneNumber === userData.phoneNumber
-      );
-      
-      if (updatedUser) {
-        console.log('✅ Using updated user data from getUpdatedSubscribersData');
-        console.log('📊 Updated data:', {
-          shares: updatedUser.sharesCount,
-          ownership: updatedUser.ownershipPercentage,
-          portfolioValue: updatedUser.realPortfolioValue
-        });
-        
-        // تحديث localStorage بالبيانات الجديدة
-        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        return updatedUser;
-      } else {
-        console.log('📋 Using cached user data (user not found in updated data)');
-        return userData;
-      }
-    }
-
-    // إذا لم توجد بيانات محلية، جرب العثور على المستخدم من قائمة المشتركين
+    // **الإصلاح الجديد: استخدام نفس مصدر البيانات الذي يستخدمه الإدمن**
+    // بدلاً من الاعتماد على localStorage، نحصل على البيانات المحدثة مباشرة
     try {
-      const subscribers = this.getUpdatedSubscribersData();
-      // محاولة العثور على المستخدم بناءً على token
-      const subscriberNumber = token.replace('local-token-', '');
-      const user = subscribers.find(sub => sub.subscriberNumber === subscriberNumber) || subscribers[0];
+      console.log('🔄 Getting fresh data using getAllSubscribers (same as admin)...');
+      const allSubscribers = await this.getAllSubscribers();
+      console.log('📋 Got', allSubscribers.length, 'subscribers from getAllSubscribers');
       
-      console.log('📋 Using subscriber data for token:', subscriberNumber, user?.fullName);
-      return user;
+      // البحث عن المستخدم الحالي
+      let currentUser = null;
+      
+      // محاولة العثور على المستخدم من localStorage أولاً للحصول على معرفه
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        console.log('📋 Found stored user:', userData.fullName, userData.phoneNumber);
+        
+        // البحث عن هذا المستخدم في البيانات المحدثة
+        currentUser = allSubscribers.find(sub => 
+          sub.fullName === userData.fullName && sub.phoneNumber === userData.phoneNumber
+        );
+        
+        if (currentUser) {
+          console.log('✅ Found user in updated data:', currentUser.fullName);
+          console.log('📊 Updated user data:', {
+            shares: currentUser.sharesCount,
+            ownership: currentUser.ownershipPercentage,
+            portfolioValue: currentUser.realPortfolioValue
+          });
+        }
+      }
+      
+      // إذا لم نجد المستخدم، نحاول البحث بناءً على token
+      if (!currentUser) {
+        const subscriberNumber = token.replace('local-token-', '');
+        currentUser = allSubscribers.find(sub => sub.subscriberNumber === subscriberNumber);
+        console.log('🔍 Searched by subscriber number:', subscriberNumber, currentUser ? 'Found' : 'Not found');
+      }
+      
+      // إذا لم نجد المستخدم، نستخدم الأول كافتراضي (جعفر)
+      if (!currentUser && allSubscribers.length > 0) {
+        currentUser = allSubscribers[0];
+        console.log('📋 Using first subscriber as default:', currentUser.fullName);
+      }
+      
+      if (currentUser) {
+        // تحديث localStorage بالبيانات الجديدة
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        console.log('💾 Updated localStorage with fresh data');
+        return currentUser;
+      }
+      
     } catch (error) {
-      console.error('Error getting user data:', error);
-      // البيانات الافتراضية لجعفر في حالة الفشل
-      return this.getUpdatedSubscribersData()[0];
+      console.error('❌ Error getting fresh user data:', error);
     }
+    
+    // في حالة الفشل، استخدم البيانات الاحتياطية
+    console.log('📋 Falling back to default data');
+    const defaultUser = this.getUpdatedSubscribersData()[0];
+    return defaultUser;
   },
 
   async saveConfig(sheetUrl: string) {

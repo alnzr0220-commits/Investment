@@ -224,15 +224,24 @@ function App() {
 
     const token = localStorage.getItem('token');
     if (token) {
+      console.log('🔄 App startup: Getting user data with token:', token);
       api.getUserData(token)
         .then(userData => {
+          console.log('✅ App startup: Got user data:', userData);
+          console.log('📊 User data details:', {
+            name: userData.fullName,
+            shares: userData.sharesCount,
+            ownership: userData.ownershipPercentage,
+            portfolioValue: userData.realPortfolioValue
+          });
+          
           setUser({
-            id: '1',
+            id: userData.subscriberNumber || '1',
             fullName: userData.fullName,
             subscriberNumber: userData.subscriberNumber,
             sharesCount: Number(userData.sharesCount),
             realPortfolioValue: Number(userData.realPortfolioValue),
-            totalIncome: Number(userData.totalIncome || 0),
+            totalIncome: Number(userData.totalIncome || userData.realPortfolioValue || 0),
             totalSavings: Number(userData.totalSavings || 0),
             monthlyPayment: Number(userData.monthlyPayment || 0),
             baseShareValue: Number(userData.baseShareValue || 0),
@@ -243,7 +252,8 @@ function App() {
             phoneNumber: userData.phoneNumber || ''
           });
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error('❌ App startup: Failed to get user data:', error);
           localStorage.removeItem('token');
         })
         .finally(() => setLoading(false));
@@ -252,8 +262,8 @@ function App() {
     }
   }, []);
 
-  const handleLogin = (userData: any) => {
-    console.log('✅ Login successful, clearing ALL cache and setting user data');
+  const handleLogin = async (userData: any) => {
+    console.log('✅ Login successful, clearing ALL cache and getting fresh data');
     
     // مسح جميع أنواع الـ cache
     localStorage.removeItem('portfolioCache');
@@ -265,24 +275,60 @@ function App() {
     // مسح session storage أيضاً
     sessionStorage.clear();
     
-    console.log('🧹 All cache cleared, setting fresh user data:', userData);
+    console.log('🧹 All cache cleared');
     
-    setUser({
-      id: userData.subscriberNumber,
-      fullName: userData.fullName,
-      subscriberNumber: userData.subscriberNumber,
-      sharesCount: userData.sharesCount,
-      realPortfolioValue: userData.realPortfolioValue,
-      totalIncome: userData.realPortfolioValue,
-      totalSavings: userData.totalSavings,
-      monthlyPayment: userData.monthlyPayment,
-      baseShareValue: userData.baseShareValue,
-      currentShareValue: userData.currentShareValue,
-      ownershipPercentage: userData.ownershipPercentage,
-      growthPercentage: userData.growthPercentage,
-      profileImage: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userData.fullName),
-      phoneNumber: userData.phoneNumber
-    });
+    // **الإصلاح الجديد: الحصول على البيانات المحدثة مباشرة من نفس مصدر الإدمن**
+    try {
+      console.log('🔄 Getting fresh user data using same method as admin...');
+      const token = userData.token || 'local-token-' + userData.subscriberNumber;
+      const freshUserData = await api.getUserData(token);
+      
+      console.log('✅ Got fresh user data:', freshUserData);
+      console.log('📊 Fresh data details:', {
+        name: freshUserData.fullName,
+        shares: freshUserData.sharesCount,
+        ownership: freshUserData.ownershipPercentage,
+        portfolioValue: freshUserData.realPortfolioValue
+      });
+      
+      setUser({
+        id: freshUserData.subscriberNumber || '1',
+        fullName: freshUserData.fullName,
+        subscriberNumber: freshUserData.subscriberNumber,
+        sharesCount: Number(freshUserData.sharesCount),
+        realPortfolioValue: Number(freshUserData.realPortfolioValue),
+        totalIncome: Number(freshUserData.realPortfolioValue),
+        totalSavings: Number(freshUserData.totalSavings),
+        monthlyPayment: Number(freshUserData.monthlyPayment),
+        baseShareValue: Number(freshUserData.baseShareValue),
+        currentShareValue: Number(freshUserData.currentShareValue),
+        ownershipPercentage: Number(freshUserData.ownershipPercentage),
+        growthPercentage: Number(freshUserData.growthPercentage),
+        profileImage: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(freshUserData.fullName),
+        phoneNumber: freshUserData.phoneNumber
+      });
+      
+    } catch (error) {
+      console.error('❌ Error getting fresh user data, using login data:', error);
+      
+      // في حالة الفشل، استخدم البيانات من تسجيل الدخول
+      setUser({
+        id: userData.subscriberNumber || '1',
+        fullName: userData.fullName,
+        subscriberNumber: userData.subscriberNumber,
+        sharesCount: userData.sharesCount,
+        realPortfolioValue: userData.realPortfolioValue,
+        totalIncome: userData.realPortfolioValue,
+        totalSavings: userData.totalSavings,
+        monthlyPayment: userData.monthlyPayment,
+        baseShareValue: userData.baseShareValue,
+        currentShareValue: userData.currentShareValue,
+        ownershipPercentage: userData.ownershipPercentage,
+        growthPercentage: userData.growthPercentage,
+        profileImage: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userData.fullName),
+        phoneNumber: userData.phoneNumber
+      });
+    }
   };
 
   const handleLogout = () => {
