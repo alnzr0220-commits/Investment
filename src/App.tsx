@@ -80,6 +80,22 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // إجبار مسح الـ cache عند تحميل التطبيق
+    const forceRefresh = () => {
+      const lastRefresh = localStorage.getItem('lastForceRefresh');
+      const now = Date.now();
+      
+      // إذا لم يتم التحديث في آخر 5 دقائق، امسح الـ cache
+      if (!lastRefresh || (now - parseInt(lastRefresh)) > 5 * 60 * 1000) {
+        console.log('🔄 Force refreshing cache...');
+        localStorage.clear();
+        sessionStorage.clear();
+        localStorage.setItem('lastForceRefresh', now.toString());
+      }
+    };
+    
+    forceRefresh();
+
     // Fetch portfolio data
     console.log('🔄 App: Loading portfolio data...');
     api.getPortfolio()
@@ -270,7 +286,16 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    // مسح جميع البيانات المحفوظة
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // مسح cookies إذا وجدت
+    document.cookie.split(";").forEach(function(c) { 
+      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+    
+    console.log('🧹 All data cleared on logout');
     setUser(null);
   };
 

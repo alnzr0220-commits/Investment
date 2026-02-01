@@ -1,9 +1,11 @@
-// API URL for staging environment (updated v5 - force rebuild with cache busting)
+// API URL for staging environment (updated v6 - FORCE CACHE CLEAR)
 const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
 
 // Force rebuild timestamp - ensure latest changes are deployed
 const CACHE_BUSTER = Date.now();
-console.log('🚀 API Module loaded - Version 5 - 2025-02-01 - Cache Buster:', CACHE_BUSTER);
+const VERSION = '6.0.0';
+console.log('🚀 API Module loaded - Version', VERSION, '- Cache Buster:', CACHE_BUSTER);
+console.log('📋 FORCING DATA REFRESH - All values updated to match worksheet exactly');
 
 // Data source URLs - Multiple approaches for Google Sheets
 const SHEET_ID = '1bZau5OniYiDK6jLf7kYwkAoSWiO9PNqCMrCY2u3Ryus';
