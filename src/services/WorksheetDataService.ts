@@ -47,11 +47,11 @@ class WorksheetDataService {
       sharesCount: 42,
       totalSavings: 38100,
       monthlyPayment: 2100,
-      baseShareValue: 900,
-      currentShareValue: 950,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
       realPortfolioValue: 38090.89,
       ownershipPercentage: 20.49,
-      growthPercentage: 4.5,
+      growthPercentage: -4.5,
     },
     {
       subscriberNumber: '2',
@@ -60,11 +60,11 @@ class WorksheetDataService {
       sharesCount: 24,
       totalSavings: 21600,
       monthlyPayment: 1200,
-      baseShareValue: 900,
-      currentShareValue: 950,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
       realPortfolioValue: 21766.22,
       ownershipPercentage: 11.71,
-      growthPercentage: 4.5,
+      growthPercentage: -4.5,
     },
     {
       subscriberNumber: '3',
@@ -73,11 +73,11 @@ class WorksheetDataService {
       sharesCount: 5,
       totalSavings: 4000,
       monthlyPayment: 1000,
-      baseShareValue: 900,
-      currentShareValue: 950,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
       realPortfolioValue: 4534.63,
       ownershipPercentage: 9.76,
-      growthPercentage: 4.5,
+      growthPercentage: -4.5,
     },
     {
       subscriberNumber: '4',
@@ -86,11 +86,11 @@ class WorksheetDataService {
       sharesCount: 15,
       totalSavings: 13500,
       monthlyPayment: 750,
-      baseShareValue: 900,
-      currentShareValue: 950,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
       realPortfolioValue: 13603.89,
       ownershipPercentage: 7.32,
-      growthPercentage: 4.5,
+      growthPercentage: -4.5,
     },
     {
       subscriberNumber: '5',
@@ -99,11 +99,11 @@ class WorksheetDataService {
       sharesCount: 10,
       totalSavings: 9000,
       monthlyPayment: 500,
-      baseShareValue: 900,
-      currentShareValue: 950,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
       realPortfolioValue: 9069.26,
       ownershipPercentage: 4.88,
-      growthPercentage: 4.5,
+      growthPercentage: -4.5,
     },
     {
       subscriberNumber: '6',
@@ -112,11 +112,11 @@ class WorksheetDataService {
       sharesCount: 10,
       totalSavings: 9000,
       monthlyPayment: 500,
-      baseShareValue: 900,
-      currentShareValue: 950,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
       realPortfolioValue: 9069.26,
       ownershipPercentage: 4.88,
-      growthPercentage: 4.5,
+      growthPercentage: -4.5,
     },
     {
       subscriberNumber: '13',
@@ -125,11 +125,11 @@ class WorksheetDataService {
       sharesCount: 6,
       totalSavings: 5400,
       monthlyPayment: 300,
-      baseShareValue: 900,
-      currentShareValue: 950,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
       realPortfolioValue: 5441.56,
       ownershipPercentage: 2.93,
-      growthPercentage: 4.5,
+      growthPercentage: -4.5,
     }
   ];
 
@@ -232,7 +232,7 @@ class WorksheetDataService {
         growth: 0.0,
       }
     ],
-    totalPortfolioValue: 185466.35
+    totalPortfolioValue: 172315.92
   };
 
   public static getInstance(): WorksheetDataService {
