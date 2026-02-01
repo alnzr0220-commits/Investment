@@ -4,7 +4,7 @@ import { LoginPage } from './components/LoginPage';
 import { Dashboard } from './components/Dashboard';
 import { SimpleAdminDashboard } from './components/SimpleAdminDashboard';
 import { Subscriber, PortfolioData } from './types';
-import cleanApi from './api/cleanApi';
+import { api } from './api';
 import { ArrowRight } from 'lucide-react';
 
 // Wrapper for Admin View of User Dashboard
@@ -15,14 +15,14 @@ const AdminUserView = () => {
   const [portfolio, setPortfolio] = useState<PortfolioData>({ items: [], totalPortfolioValue: 0 });
 
   useEffect(() => {
-    console.log('🔄 Clean App: Loading portfolio data...');
-    cleanApi.getPortfolio()
+    console.log('🔄 Admin View: Loading portfolio data...');
+    api.getPortfolio()
       .then(data => {
-        console.log('✅ Clean App: Portfolio data loaded:', data);
+        console.log('✅ Admin View: Portfolio data loaded:', data);
         setPortfolio(data);
       })
       .catch(error => {
-        console.error('❌ Clean App: Failed to load portfolio:', error);
+        console.error('❌ Admin View: Failed to load portfolio:', error);
         // البيانات الاحتياطية
         setPortfolio({ items: [], totalPortfolioValue: 0 });
       });

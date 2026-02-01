@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Database, LogOut, Search, User, Eye, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import cleanApi from '../api/cleanApi';
+import { api } from '../api';
 
 export const SimpleAdminDashboard: React.FC = () => {
   const [subscribers, setSubscribers] = useState<any[]>([]);
@@ -17,11 +17,11 @@ export const SimpleAdminDashboard: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const subs = await cleanApi.getAllSubscribers();
-      console.log('✅ Clean Admin: Loaded', subs.length, 'subscribers');
+      const subs = await api.getAllSubscribers();
+      console.log('✅ Admin: Loaded', subs.length, 'subscribers');
       setSubscribers(subs);
     } catch (err) {
-      console.error('❌ Clean Admin: Failed to load subscribers:', err);
+      console.error('❌ Admin: Failed to load subscribers:', err);
       setError('فشل تحميل البيانات');
     } finally {
       setLoading(false);
