@@ -568,7 +568,7 @@ export const api = {
     }
     
     // البيانات الاحتياطية من الورك شيت (آخر نسخة محدثة) - 8 شركات كاملة
-    console.log('📋 Using backup data from worksheet...');
+    console.log('📋 Using backup data from worksheet - 8 companies...');
     const portfolioData = {
       items: [
         {

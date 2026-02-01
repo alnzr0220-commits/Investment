@@ -81,14 +81,16 @@ function App() {
 
   useEffect(() => {
     // Fetch portfolio data
-    console.log('🔄 Loading portfolio data...');
+    console.log('🔄 App: Loading portfolio data...');
     api.getPortfolio()
       .then(data => {
-        console.log('✅ Portfolio data loaded:', data);
+        console.log('✅ App: Portfolio data loaded successfully:', data);
+        console.log('✅ App: Items count:', data.items ? data.items.length : 0);
+        console.log('✅ App: Total value:', data.totalPortfolioValue);
         setPortfolio(data);
       })
       .catch(error => {
-        console.error('❌ Failed to load portfolio:', error);
+        console.error('❌ App: Failed to load portfolio:', error);
         // استخدام البيانات الاحتياطية في حالة الفشل
         const backupData = {
           items: [
@@ -197,9 +199,10 @@ function App() {
               growth: 0.0,
             }
           ],
-          totalPortfolioValue: 185466.35
+          totalPortfolioValue: 172315.92
         };
-        console.log('🔄 Using backup portfolio data:', backupData);
+        console.log('🔄 App: Using backup portfolio data:', backupData);
+        console.log('🔄 App: Backup items count:', backupData.items.length);
         setPortfolio(backupData);
       });
 
