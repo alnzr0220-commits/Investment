@@ -226,7 +226,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                   className="cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => setSelectedCompany(null)}
                 >
-                  <td colSpan={5} className="px-4 py-4 text-sm font-bold text-gray-900 text-left pl-8">إجمالي قيمة المحفظة</td>
+                  <td colSpan={6} className="px-4 py-4 text-sm font-bold text-gray-900 text-right">إجمالي قيمة المحفظة</td>
                   <td className="px-4 py-4 whitespace-nowrap text-lg font-bold text-primary-700">{actualData.totalPortfolioValue.toLocaleString()} ر.س</td>
                 </tr>
               </tfoot>
