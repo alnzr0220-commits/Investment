@@ -41,8 +41,8 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'year'>('month');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
-  // البيانات الثابتة من الورك شيت - 8 شركات كاملة
-  const portfolioData = {
+  // استخدام البيانات من API بدلاً من البيانات الثابتة
+  const actualData = data && data.items && data.items.length > 0 ? data : {
     items: [
       {
         companyName: 'يغطي الأسهم الامريكية الكبرى (S&P500)',
@@ -117,11 +117,8 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         growth: 0.0,
       }
     ],
-    totalPortfolioValue: 185466.35
+    totalPortfolioValue: 172315.92
   };
-
-  // استخدام البيانات الثابتة دائماً
-  const actualData = portfolioData;
   const hasData = actualData.items && actualData.items.length > 0;
 
   const chartData = hasData ? actualData.items.map(item => ({

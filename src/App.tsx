@@ -234,7 +234,12 @@ function App() {
   }, []);
 
   const handleLogin = (userData: any) => {
-    console.log('✅ Clean App: Login successful, setting user data');
+    console.log('✅ Login successful, clearing cache and setting user data');
+    
+    // مسح الـ cache
+    localStorage.removeItem('portfolioCache');
+    localStorage.removeItem('subscribersCache');
+    
     setUser({
       id: userData.subscriberNumber,
       fullName: userData.fullName,
