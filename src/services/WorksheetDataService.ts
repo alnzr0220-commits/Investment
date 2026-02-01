@@ -37,18 +37,27 @@ class WorksheetDataService {
   private static instance: WorksheetDataService;
   private lastUpdate: Date | null = null;
   private updateInterval: number = 60 * 60 * 1000; // ساعة واحدة
+  private autoUpdateTimer: any = null;
   
-  // البيانات الحالية من الورك شيت (آخر تحديث)
+  // روابط الورك شيت المحدثة
+  private readonly WORKSHEET_URLS = {
+    subscribers: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=0',
+    portfolio: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=1',
+    alternativeSubscribers: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=tsv',
+    alternativePortfolio: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=tsv&gid=1'
+  };
+  
+  // البيانات الحالية من الورك شيت (محدثة حسب الصور المرسلة)
   private currentSubscribers: WorksheetSubscriber[] = [
     {
       subscriberNumber: '1',
       fullName: 'جعفر طاهر الزبر',
-      phoneNumber: '534000223',
+      phoneNumber: '536003223',
       sharesCount: 42,
       totalSavings: 38100,
       monthlyPayment: 2100,
-      baseShareValue: 906.93,
-      currentShareValue: 916.92,
+      baseShareValue: 950.00,
+      currentShareValue: 906.93,
       realPortfolioValue: 38090.89,
       ownershipPercentage: 20.49,
       growthPercentage: -4.5,
@@ -60,8 +69,8 @@ class WorksheetDataService {
       sharesCount: 24,
       totalSavings: 21600,
       monthlyPayment: 1200,
-      baseShareValue: 906.93,
-      currentShareValue: 916.92,
+      baseShareValue: 950.00,
+      currentShareValue: 906.93,
       realPortfolioValue: 21766.22,
       ownershipPercentage: 11.71,
       growthPercentage: -4.5,
@@ -73,22 +82,22 @@ class WorksheetDataService {
       sharesCount: 5,
       totalSavings: 4000,
       monthlyPayment: 1000,
-      baseShareValue: 906.93,
-      currentShareValue: 916.92,
+      baseShareValue: 950.00,
+      currentShareValue: 906.93,
       realPortfolioValue: 4534.63,
       ownershipPercentage: 9.76,
       growthPercentage: -4.5,
     },
     {
       subscriberNumber: '4',
-      fullName: 'يوسف أحمد السحيمي',
+      fullName: 'يوسف أحمد المحيميد علي',
       phoneNumber: '560090953',
       sharesCount: 15,
       totalSavings: 13500,
       monthlyPayment: 750,
       baseShareValue: 906.93,
       currentShareValue: 916.92,
-      realPortfolioValue: 13603.89,
+      realPortfolioValue: 13753.80,
       ownershipPercentage: 7.32,
       growthPercentage: -4.5,
     },
@@ -101,7 +110,7 @@ class WorksheetDataService {
       monthlyPayment: 500,
       baseShareValue: 906.93,
       currentShareValue: 916.92,
-      realPortfolioValue: 9069.26,
+      realPortfolioValue: 9169.20,
       ownershipPercentage: 4.88,
       growthPercentage: -4.5,
     },
@@ -114,8 +123,86 @@ class WorksheetDataService {
       monthlyPayment: 500,
       baseShareValue: 906.93,
       currentShareValue: 916.92,
-      realPortfolioValue: 9069.26,
+      realPortfolioValue: 9169.20,
       ownershipPercentage: 4.88,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '7',
+      fullName: 'عبد الله أحمد المحيميد علي',
+      phoneNumber: '561930452',
+      sharesCount: 10,
+      totalSavings: 9000,
+      monthlyPayment: 500,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 9169.20,
+      ownershipPercentage: 4.88,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '8',
+      fullName: 'أحمد علي المحيميد',
+      phoneNumber: '582299942',
+      sharesCount: 10,
+      totalSavings: 9000,
+      monthlyPayment: 500,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 9169.20,
+      ownershipPercentage: 4.88,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '9',
+      fullName: 'علي عبد الله الشهيب',
+      phoneNumber: '550978601',
+      sharesCount: 7,
+      totalSavings: 6300,
+      monthlyPayment: 350,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 6418.44,
+      ownershipPercentage: 3.42,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '10',
+      fullName: 'مصطفى الحوراني',
+      phoneNumber: '537926814',
+      sharesCount: 6,
+      totalSavings: 5400,
+      monthlyPayment: 300,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 5501.52,
+      ownershipPercentage: 2.93,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '11',
+      fullName: 'عباس طاهر الزبر',
+      phoneNumber: '506394798',
+      sharesCount: 6,
+      totalSavings: 5400,
+      monthlyPayment: 300,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 5501.52,
+      ownershipPercentage: 2.93,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '12',
+      fullName: 'فيصل طاهر الزبر',
+      phoneNumber: '567935956',
+      sharesCount: 6,
+      totalSavings: 5400,
+      monthlyPayment: 300,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 5501.52,
+      ownershipPercentage: 2.93,
       growthPercentage: -4.5,
     },
     {
@@ -127,8 +214,112 @@ class WorksheetDataService {
       monthlyPayment: 300,
       baseShareValue: 906.93,
       currentShareValue: 916.92,
-      realPortfolioValue: 5441.56,
+      realPortfolioValue: 5501.52,
       ownershipPercentage: 2.93,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '14',
+      fullName: 'محمد طاهر الزبر',
+      phoneNumber: '569373888',
+      sharesCount: 4,
+      totalSavings: 3600,
+      monthlyPayment: 200,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 3667.68,
+      ownershipPercentage: 1.95,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '15',
+      fullName: 'محمد المحيميد علي',
+      phoneNumber: '569221338',
+      sharesCount: 4,
+      totalSavings: 3050,
+      monthlyPayment: 200,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 3667.68,
+      ownershipPercentage: 1.95,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '16',
+      fullName: 'زياد الزبر',
+      phoneNumber: '552657630',
+      sharesCount: 6,
+      totalSavings: 5400,
+      monthlyPayment: 300,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 5501.52,
+      ownershipPercentage: 2.93,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '17',
+      fullName: 'مريم الزبر',
+      phoneNumber: '551257703',
+      sharesCount: 3,
+      totalSavings: 2700,
+      monthlyPayment: 150,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 2750.76,
+      ownershipPercentage: 1.46,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '18',
+      fullName: 'أسماء الشلاحي',
+      phoneNumber: '562087772',
+      sharesCount: 3,
+      totalSavings: 2700,
+      monthlyPayment: 150,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 2750.76,
+      ownershipPercentage: 1.46,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '19',
+      fullName: 'جوهرة الشلاحي',
+      phoneNumber: '542626031',
+      sharesCount: 3,
+      totalSavings: 2700,
+      monthlyPayment: 150,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 2750.76,
+      ownershipPercentage: 1.46,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '20',
+      fullName: 'زهرة الشهيب',
+      phoneNumber: '537926876',
+      sharesCount: 3,
+      totalSavings: 2850,
+      monthlyPayment: 150,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 2750.76,
+      ownershipPercentage: 1.46,
+      growthPercentage: -4.5,
+    },
+    {
+      subscriberNumber: '21',
+      fullName: 'أحمد طاهر الشلاحي',
+      phoneNumber: '564519351',
+      sharesCount: 3,
+      totalSavings: 2700,
+      monthlyPayment: 150,
+      baseShareValue: 906.93,
+      currentShareValue: 916.92,
+      realPortfolioValue: 2750.76,
+      ownershipPercentage: 1.46,
       growthPercentage: -4.5,
     }
   ];
@@ -246,6 +437,7 @@ class WorksheetDataService {
     // بدء التحديث التلقائي كل ساعة
     this.startAutoUpdate();
     console.log('🚀 WorksheetDataService initialized - Auto-update every hour');
+    console.log('📋 Updated with latest worksheet data - 21 subscribers');
   }
 
   private startAutoUpdate() {
@@ -253,24 +445,209 @@ class WorksheetDataService {
     this.updateFromWorksheet();
     
     // تحديث كل ساعة
-    setInterval(() => {
+    this.autoUpdateTimer = setInterval(() => {
       this.updateFromWorksheet();
     }, this.updateInterval);
+    
+    console.log('⏰ Auto-update timer started - will refresh every hour');
+  }
+
+  public stopAutoUpdate() {
+    if (this.autoUpdateTimer) {
+      clearInterval(this.autoUpdateTimer);
+      this.autoUpdateTimer = null;
+      console.log('🛑 Auto-update timer stopped');
+    }
   }
 
   private async updateFromWorksheet() {
     try {
-      console.log('🔄 Updating data from Google Sheets...');
+      console.log('🔄 Attempting to update data from Google Sheets...');
       
-      // محاولة جلب البيانات من Google Sheets
-      // إذا فشل، سيبقى على البيانات الحالية
+      // محاولة جلب بيانات المشتركين
+      await this.fetchSubscribersFromWorksheet();
+      
+      // محاولة جلب بيانات المحفظة
+      await this.fetchPortfolioFromWorksheet();
       
       this.lastUpdate = new Date();
-      console.log('✅ Data updated at:', this.lastUpdate.toLocaleString('ar-SA'));
+      console.log('✅ Data updated successfully at:', this.lastUpdate.toLocaleString('ar-SA'));
       
     } catch (error) {
       console.warn('⚠️ Failed to update from worksheet, using cached data:', error);
     }
+  }
+
+  private async fetchSubscribersFromWorksheet() {
+    const urls = [
+      this.WORKSHEET_URLS.subscribers,
+      this.WORKSHEET_URLS.alternativeSubscribers
+    ];
+
+    for (const url of urls) {
+      try {
+        console.log(`📋 Trying to fetch subscribers from: ${url}`);
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        });
+
+        if (response.ok) {
+          const textData = await response.text();
+          console.log(`📋 Response length: ${textData.length} characters`);
+          
+          if (textData.length > 300 && textData.includes(',') && !textData.includes('بيانات المشتركين بالصندوق المستقبل')) {
+            const parsedData = this.parseSubscribersCSV(textData);
+            if (parsedData.length > 0) {
+              this.currentSubscribers = parsedData;
+              console.log(`✅ Successfully updated ${parsedData.length} subscribers from worksheet`);
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.warn(`Failed to fetch from ${url}:`, error);
+      }
+    }
+    
+    console.log('📋 Using cached subscriber data');
+  }
+
+  private async fetchPortfolioFromWorksheet() {
+    const urls = [
+      this.WORKSHEET_URLS.portfolio,
+      this.WORKSHEET_URLS.alternativePortfolio
+    ];
+
+    for (const url of urls) {
+      try {
+        console.log(`📋 Trying to fetch portfolio from: ${url}`);
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        });
+
+        if (response.ok) {
+          const textData = await response.text();
+          console.log(`📋 Portfolio response length: ${textData.length} characters`);
+          
+          if (textData.length > 300 && textData.includes(',')) {
+            const parsedData = this.parsePortfolioCSV(textData);
+            if (parsedData.items.length > 0) {
+              this.currentPortfolio = parsedData;
+              console.log(`✅ Successfully updated ${parsedData.items.length} portfolio items from worksheet`);
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.warn(`Failed to fetch portfolio from ${url}:`, error);
+      }
+    }
+    
+    console.log('📋 Using cached portfolio data');
+  }
+
+  private parseSubscribersCSV(csvText: string): WorksheetSubscriber[] {
+    const lines = csvText.split('\n').filter(line => line.trim());
+    const subscribers: WorksheetSubscriber[] = [];
+
+    console.log('📋 Parsing subscribers CSV...');
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const values = line.includes('\t') ? 
+        line.split('\t').map(v => v.trim().replace(/^"|"$/g, '')) :
+        line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      
+      if (values.length >= 10 && values[0] && values[1]) {
+        try {
+          const subscriber: WorksheetSubscriber = {
+            subscriberNumber: values[1] || i.toString(),
+            fullName: values[0] || '',
+            phoneNumber: values[2] || '',
+            sharesCount: parseFloat(values[3]) || 0,
+            totalSavings: this.parseSARValue(values[4]) || 0,
+            monthlyPayment: this.parseSARValue(values[5]) || 0,
+            baseShareValue: this.parseSARValue(values[6]) || 0,
+            currentShareValue: this.parseSARValue(values[7]) || 0,
+            realPortfolioValue: this.parseSARValue(values[8]) || 0,
+            ownershipPercentage: parseFloat(values[9]?.replace('%', '')) || 0,
+            growthPercentage: parseFloat(values[10]?.replace('%', '')) || 0,
+          };
+          
+          if (subscriber.fullName && subscriber.subscriberNumber) {
+            subscribers.push(subscriber);
+          }
+        } catch (error) {
+          console.warn(`Error parsing subscriber row ${i}:`, error);
+        }
+      }
+    }
+    
+    return subscribers;
+  }
+
+  private parsePortfolioCSV(csvText: string): WorksheetPortfolio {
+    const lines = csvText.split('\n').filter(line => line.trim());
+    const items: WorksheetPortfolioItem[] = [];
+    let totalValue = 0;
+
+    console.log('📋 Parsing portfolio CSV...');
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const values = line.includes('\t') ? 
+        line.split('\t').map(v => v.trim().replace(/^"|"$/g, '')) :
+        line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      
+      if (values.length >= 8 && values[0]) {
+        try {
+          const item: WorksheetPortfolioItem = {
+            companyName: values[0] || '',
+            assetSymbol: values[1] || '',
+            units: parseFloat(values[2]) || 0,
+            marketPrice: parseFloat(values[3]) || 0,
+            averagePrice: parseFloat(values[4]) || 0,
+            baseCost: parseFloat(values[5]) || 0,
+            marketValueUSD: parseFloat(values[6]) || 0,
+            unrealizedProfitLoss: parseFloat(values[7]) || 0,
+            totalValueSAR: parseFloat(values[8]) || 0,
+            growth: parseFloat(values[9]) || 0,
+          };
+          
+          if (item.companyName && item.totalValueSAR > 0) {
+            items.push(item);
+            totalValue += item.totalValueSAR;
+          }
+        } catch (error) {
+          console.warn(`Error parsing portfolio row ${i}:`, error);
+        }
+      }
+    }
+    
+    return {
+      items,
+      totalPortfolioValue: totalValue || 185466.35 // fallback to known total
+    };
+  }
+
+  private parseSARValue(value: string): number {
+    if (!value) return 0;
+    const cleanValue = value.toString().replace(/[^\d.-]/g, '');
+    return parseFloat(cleanValue) || 0;
+  }
+
+  // تحديث يدوي فوري
+  public async forceUpdate(): Promise<void> {
+    console.log('🔄 Force updating data from worksheet...');
+    await this.updateFromWorksheet();
   }
 
   // الحصول على بيانات المشترك

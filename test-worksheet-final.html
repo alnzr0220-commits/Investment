@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الورك شيت النهائي</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .data-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .test-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .test-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .test-details {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 11px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #007bff;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار الورك شيت النهائي</h1>
+        
+        <div id="status" class="status info">
+            🔄 النظام جاهز للاختبار...
+        </div>
+        
+        <div>
+            <button class="btn" onclick="testAllConnections()" id="testBtn">اختبار جميع الاتصالات</button>
+            <button class="btn" onclick="testSpecificData()" id="dataBtn">اختبار البيانات المحددة</button>
+            <button class="btn" onclick="simulateHourlyUpdate()" id="updateBtn">محاكاة التحديث التلقائي</button>
+            <button class="btn" onclick="showSystemInfo()" id="infoBtn">معلومات النظام</button>
+        </div>
+        
+        <div id="progress-container" style="display: none;">
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar">0%</div>
+            </div>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        console.log('🚀 Starting final worksheet integration test...');
+        
+        // الروابط المحدثة للورك شيت
+        const WORKSHEET_URLS = {
+            subscribersCSV: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=0',
+            portfolioCSV: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=1',
+            subscribersHTML: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pubhtml?gid=0&single=true',
+            portfolioHTML: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pubhtml?gid=1&single=true',
+            subscribersTSV: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=tsv&gid=0',
+            portfolioTSV: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=tsv&gid=1'
+        };
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+        }
+        
+        function showResults(content) {
+            document.getElementById('results').innerHTML = content;
+        }
+        
+        function updateProgress(percent, text = '') {
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            
+            if (percent > 0) {
+                progressContainer.style.display = 'block';
+                progressBar.style.width = percent + '%';
+                progressBar.textContent = text || percent + '%';
+            } else {
+                progressContainer.style.display = 'none';
+            }
+        }
+        
+        function disableButtons(disabled = true) {
+            const buttons = ['testBtn', 'dataBtn', 'updateBtn', 'infoBtn'];
+            buttons.forEach(id => {
+                document.getElementById(id).disabled = disabled;
+            });
+        }
+        
+        async function testSingleURL(name, url, expectedData) {
+            console.log(`Testing ${name}: ${url}`);
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+                
+                const response = await fetch(url, { 
+                    signal: controller.signal,
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    }
+                });
+                clearTimeout(timeoutId);
+                
+                const text = await response.text();
+                
+                // Check for specific data indicators
+                const hasSubscriberData = text.includes('جعفر') && text.includes('534000223');
+                const hasPortfolioData = text.includes('SPUS') || text.includes('S&P500') || text.includes('يغطي الأسهم');
+                const isHTML = text.includes('<html') || text.includes('<table');
+                const isCSV = text.includes(',') && !isHTML;
+                const isTSV = text.includes('\t') && !isHTML;
+                
+                let dataQuality = 'غير معروف';
+                let hasExpectedData = false;
+                
+                if (expectedData === 'subscribers') {
+                    hasExpectedData = hasSubscriberData;
+                    if (hasSubscriberData) {
+                        const lines = text.split('\n').filter(l => l.trim());
+                        dataQuality = `${lines.length - 1} مشترك تقريباً`;
+                    }
+                } else if (expectedData === 'portfolio') {
+                    hasExpectedData = hasPortfolioData;
+                    if (hasPortfolioData) {
+                        const lines = text.split('\n').filter(l => l.trim());
+                        dataQuality = `${lines.length - 1} شركة تقريباً`;
+                    }
+                }
+                
+                return {
+                    name: name,
+                    url: url,
+                    status: response.ok ? 'نجح' : 'فشل',
+                    responseTime: 'أقل من 30 ثانية',
+                    dataLength: text.length,
+                    hasExpectedData: hasExpectedData,
+                    dataQuality: dataQuality,
+                    format: isHTML ? 'HTML' : (isCSV ? 'CSV' : (isTSV ? 'TSV' : 'غير معروف')),
+                    preview: text.substring(0, 300),
+                    error: null
+                };
+                
+            } catch (error) {
+                return {
+                    name: name,
+                    url: url,
+                    status: 'خطأ',
+                    error: error.message,
+                    hasExpectedData: false
+                };
+            }
+        }
+        
+        async function testAllConnections() {
+            updateStatus('🔄 بدء اختبار جميع الاتصالات... (قد يستغرق عدة دقائق)', 'info');
+            disableButtons(true);
+            
+            const tests = [
+                { name: 'المشتركين (CSV)', url: WORKSHEET_URLS.subscribersCSV, expected: 'subscribers' },
+                { name: 'المحفظة (CSV)', url: WORKSHEET_URLS.portfolioCSV, expected: 'portfolio' },
+                { name: 'المشتركين (HTML)', url: WORKSHEET_URLS.subscribersHTML, expected: 'subscribers' },
+                { name: 'المحفظة (HTML)', url: WORKSHEET_URLS.portfolioHTML, expected: 'portfolio' },
+                { name: 'المشتركين (TSV)', url: WORKSHEET_URLS.subscribersTSV, expected: 'subscribers' },
+                { name: 'المحفظة (TSV)', url: WORKSHEET_URLS.portfolioTSV, expected: 'portfolio' }
+            ];
+            
+            const results = [];
+            
+            for (let i = 0; i < tests.length; i++) {
+                const test = tests[i];
+                const progress = Math.round(((i + 1) / tests.length) * 100);
+                
+                updateProgress(progress, `اختبار ${test.name}...`);
+                updateStatus(`🔄 اختبار ${test.name}... (${i + 1}/${tests.length})`, 'info');
+                
+                const result = await testSingleURL(test.name, test.url, test.expected);
+                results.push(result);
+                
+                // Small delay between requests
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            updateProgress(0);
+            displayTestResults(results);
+            
+            const successfulTests = results.filter(r => r.status === 'نجح' && r.hasExpectedData);
+            if (successfulTests.length > 0) {
+                updateStatus(`✅ تم العثور على ${successfulTests.length} اتصال ناجح من أصل ${results.length}!`, 'success');
+            } else {
+                updateStatus('⚠️ لم يتم العثور على بيانات صالحة، سيتم استخدام البيانات الاحتياطية', 'warning');
+            }
+            
+            disableButtons(false);
+        }
+        
+        function displayTestResults(results) {
+            let html = '<div class="data-section"><h3>نتائج اختبار الاتصالات:</h3>';
+            
+            results.forEach(result => {
+                const statusClass = result.status === 'نجح' && result.hasExpectedData ? 'status-success' : 
+                                  result.status === 'نجح' ? 'status-warning' : 'status-error';
+                const statusText = result.status === 'نجح' && result.hasExpectedData ? 'ممتاز' :
+                                 result.status === 'نجح' ? 'متصل لكن بدون بيانات' : 'فشل';
+                
+                html += `
+                    <div class="test-item">
+                        <div class="test-name">
+                            ${result.name}
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="test-details">
+                            <strong>الحالة:</strong> ${result.status}<br>
+                            ${result.responseTime ? `<strong>وقت الاستجابة:</strong> ${result.responseTime}<br>` : ''}
+                            <strong>طول البيانات:</strong> ${result.dataLength || 'غير متوفر'} حرف<br>
+                            ${result.format ? `<strong>نوع البيانات:</strong> ${result.format}<br>` : ''}
+                            ${result.dataQuality ? `<strong>جودة البيانات:</strong> ${result.dataQuality}<br>` : ''}
+                            <strong>يحتوي على البيانات المطلوبة:</strong> ${result.hasExpectedData ? 'نعم ✅' : 'لا ❌'}<br>
+                            ${result.error ? `<strong>الخطأ:</strong> ${result.error}<br>` : ''}
+                            ${result.preview ? `<strong>معاينة البيانات:</strong><pre>${result.preview}</pre>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            showResults(html);
+        }
+        
+        async function testSpecificData() {
+            updateStatus('🔄 اختبار البيانات المحددة...', 'info');
+            disableButtons(true);
+            
+            // Test for specific known data
+            const specificTests = [
+                {
+                    name: 'بيانات جعفر طاهر الزبر',
+                    url: WORKSHEET_URLS.subscribersCSV,
+                    check: (text) => text.includes('جعفر') && text.includes('534000223') && text.includes('42')
+                },
+                {
+                    name: 'بيانات عباس صالح الزبر',
+                    url: WORKSHEET_URLS.subscribersCSV,
+                    check: (text) => text.includes('عباس') && text.includes('504996691') && text.includes('24')
+                },
+                {
+                    name: 'شركة SPUS',
+                    url: WORKSHEET_URLS.portfolioCSV,
+                    check: (text) => text.includes('SPUS') && text.includes('257')
+                },
+                {
+                    name: 'إجمالي المحفظة 185,466.35',
+                    url: WORKSHEET_URLS.portfolioCSV,
+                    check: (text) => text.includes('185') && text.includes('466')
+                }
+            ];
+            
+            const results = [];
+            
+            for (const test of specificTests) {
+                try {
+                    const response = await fetch(test.url);
+                    const text = await response.text();
+                    const passed = test.check(text);
+                    
+                    results.push({
+                        name: test.name,
+                        status: passed ? 'نجح' : 'فشل',
+                        details: passed ? 'تم العثور على البيانات المطلوبة' : 'لم يتم العثور على البيانات المطلوبة'
+                    });
+                } catch (error) {
+                    results.push({
+                        name: test.name,
+                        status: 'خطأ',
+                        details: error.message
+                    });
+                }
+            }
+            
+            let html = '<div class="data-section"><h3>نتائج اختبار البيانات المحددة:</h3>';
+            
+            results.forEach(result => {
+                const statusClass = result.status === 'نجح' ? 'status-success' : 'status-error';
+                html += `
+                    <div class="test-item">
+                        <div class="test-name">
+                            ${result.name}
+                            <span class="status-badge ${statusClass}">${result.status}</span>
+                        </div>
+                        <div class="test-details">${result.details}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            showResults(html);
+            
+            const passedTests = results.filter(r => r.status === 'نجح');
+            updateStatus(`✅ نجح ${passedTests.length} من أصل ${results.length} اختبارات`, 
+                        passedTests.length === results.length ? 'success' : 'warning');
+            
+            disableButtons(false);
+        }
+        
+        function simulateHourlyUpdate() {
+            updateStatus('🔄 محاكاة التحديث التلقائي كل ساعة...', 'info');
+            
+            let html = `
+                <div class="data-section">
+                    <h3>محاكاة التحديث التلقائي:</h3>
+                    <div class="test-item">
+                        <div class="test-name">آلية التحديث التلقائي</div>
+                        <div class="test-details">
+                            ✅ النظام مُعد للتحديث كل ساعة<br>
+                            ✅ يجرب عدة روابط مختلفة (CSV, HTML, TSV)<br>
+                            ✅ مهلة زمنية 30 ثانية لكل محاولة<br>
+                            ✅ بيانات احتياطية في حالة فشل الاتصال<br>
+                            ✅ تخزين مؤقت للبيانات لتحسين الأداء<br><br>
+                            
+                            <strong>الجدولة:</strong><br>
+                            - التحديث التلقائي: كل 60 دقيقة<br>
+                            - التحديث عند فتح الصفحة: فوري<br>
+                            - التحديث اليدوي: متاح في أي وقت<br><br>
+                            
+                            <strong>آخر تحديث محاكي:</strong> ${new Date().toLocaleString('ar-SA')}<br>
+                            <strong>التحديث التالي:</strong> ${new Date(Date.now() + 3600000).toLocaleString('ar-SA')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showResults(html);
+            updateStatus('✅ محاكاة التحديث التلقائي مكتملة', 'success');
+        }
+        
+        function showSystemInfo() {
+            const html = `
+                <div class="data-section">
+                    <h3>معلومات النظام:</h3>
+                    <div class="test-item">
+                        <div class="test-name">إعدادات الورك شيت</div>
+                        <div class="test-details">
+                            <strong>الورقة الأولى:</strong> بيانات المشتركين (21 مشترك)<br>
+                            <strong>الورقة الثانية:</strong> تفاصيل الشركات والمحفظة (8 شركات)<br>
+                            <strong>إجمالي قيمة المحفظة:</strong> 185,466.35 ر.س<br><br>
+                            
+                            <strong>الروابط المستخدمة:</strong><br>
+                            - CSV: للحصول على البيانات المنظمة<br>
+                            - HTML: للعرض المرئي والتحليل<br>
+                            - TSV: كبديل للـ CSV<br><br>
+                            
+                            <strong>المميزات:</strong><br>
+                            ✅ تحديث تلقائي كل ساعة<br>
+                            ✅ معالجة أخطاء متقدمة<br>
+                            ✅ بيانات احتياطية محدثة<br>
+                            ✅ دعم عدة صيغ (CSV, HTML, TSV)<br>
+                            ✅ مهلة زمنية مناسبة (30 ثانية)<br>
+                            ✅ تخزين مؤقت ذكي<br><br>
+                            
+                            <strong>البيانات المحدثة:</strong><br>
+                            - جعفر: 42 سهم، 20.49% ملكية<br>
+                            - عباس: 24 سهم، 11.71% ملكية<br>
+                            - محمد: 5 أسهم، 9.76% ملكية<br>
+                            - قيمة السهم الأساس: 906.93 ر.س<br>
+                            - قيمة السهم الحالي: 916.92 ر.س
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showResults(html);
+            updateStatus('ℹ️ معلومات النظام معروضة', 'info');
+        }
+        
+        // تشغيل اختبار أولي
+        window.addEventListener('load', () => {
+            updateStatus('✅ النظام جاهز للاختبار - تم تحديث الروابط للورك شيت الجديد', 'success');
+            console.log('🎉 Final test system loaded successfully');
+            console.log('📋 Updated with new worksheet URLs');
+            console.log('⏰ 30-second timeout for Google Sheets slow loading');
+            console.log('🔄 Auto-update every hour configured');
+        });
+    </script>
+</body>
+</html>

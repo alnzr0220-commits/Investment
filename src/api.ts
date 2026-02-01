@@ -3,26 +3,32 @@ const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
 
 // Force rebuild timestamp - ensure latest changes are deployed
 const CACHE_BUSTER = Date.now();
-const VERSION = '6.0.0';
+const VERSION = '7.0.0';
 console.log('🚀 API Module loaded - Version', VERSION, '- Cache Buster:', CACHE_BUSTER);
-console.log('📋 FORCING DATA REFRESH - All values updated to match worksheet exactly');
+console.log('📋 AUTO-UPDATE: System will fetch fresh data from worksheet every hour');
 
-// Data source URLs - Multiple approaches for Google Sheets
-const SHEET_ID = '1bZau5OniYiDK6jLf7kYwkAoSWiO9PNqCMrCY2u3Ryus';
+// Auto-update mechanism - refresh data every hour
+let lastDataUpdate = 0;
+const UPDATE_INTERVAL = 60 * 60 * 1000; // 1 hour in milliseconds
+let cachedSubscribersData: any[] = [];
+let cachedPortfolioData: any = null;
+
+// Data source URLs - Updated with user's worksheet (both sheets)
+const SHEET_ID = '2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx';
 const MAIN_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv';
-const SUBSCRIBERS_DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
-const PORTFOLIO_DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=1614954373`;
+const SUBSCRIBERS_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=0';
+const PORTFOLIO_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=1';
 
-// Alternative: Try different export formats
-const ALT_SUBSCRIBERS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?gid=0&single=true&output=tsv';
-const ALT_PORTFOLIO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?gid=1614954373&single=true&output=tsv';
+// Alternative formats for better compatibility
+const ALT_SUBSCRIBERS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=tsv&gid=0';
+const ALT_PORTFOLIO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=tsv&gid=1';
 
-// HTML versions for scraping
+// HTML versions for scraping if needed
 const HTML_SUBSCRIBERS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pubhtml?gid=0&single=true';
-const HTML_PORTFOLIO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pubhtml?gid=1614954373&single=true';
+const HTML_PORTFOLIO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pubhtml?gid=1&single=true';
 
-// Timeout for fetch requests (10 seconds)
-const FETCH_TIMEOUT = 10000;
+// Timeout for fetch requests (30 seconds for Google Sheets slow loading)
+const FETCH_TIMEOUT = 30000;
 
 // Helper function to fetch with timeout
 const fetchWithTimeout = async (url: string, timeout = FETCH_TIMEOUT) => {
@@ -45,6 +51,21 @@ const fetchWithTimeout = async (url: string, timeout = FETCH_TIMEOUT) => {
 };
 
 export const api = {
+  // Force refresh data from worksheet
+  async forceRefreshData() {
+    console.log('🔄 FORCING DATA REFRESH from worksheet...');
+    lastDataUpdate = 0; // Reset timestamp to force refresh
+    cachedSubscribersData = [];
+    cachedPortfolioData = null;
+    
+    // Fetch fresh data
+    const subscribers = await this.getAllSubscribers();
+    const portfolio = await this.getPortfolio();
+    
+    console.log('✅ Data refresh completed');
+    return { subscribers, portfolio };
+  },
+
   async login(fullName: string, phoneNumber: string) {
     // التحقق من بيانات الإدمن أولاً
     if (fullName === 'مدير النظام الرئيسي' && phoneNumber === 'admin123') {
@@ -143,35 +164,64 @@ export const api = {
 
   async getAllSubscribers() {
     console.log('📋 Loading subscribers data from Google Sheets...');
+    console.log('⏳ Note: Google Sheets may take time to load, please wait...');
+    
+    // Check if we need to refresh data (every hour)
+    const now = Date.now();
+    const shouldRefresh = (now - lastDataUpdate) > UPDATE_INTERVAL;
+    
+    if (!shouldRefresh && cachedSubscribersData.length > 0) {
+      console.log('📋 Using cached subscribers data (updated within last hour)');
+      return cachedSubscribersData;
+    }
+    
+    console.log('📋 Fetching fresh data from worksheet... (this may take 30+ seconds)');
     
     try {
-      // محاولة جلب البيانات من Google Sheets أولاً
-      const response = await fetchWithTimeout(SUBSCRIBERS_DATA_URL);
-      if (response.ok) {
-        const csvText = await response.text();
-        console.log('Subscribers CSV response:', csvText.substring(0, 300));
-        
-        if (csvText.length > 200 && !csvText.includes('بيانات المشتركين بالصندوق المستقبل')) {
-          const result = this.parseCSVToSubscribers(csvText);
-          if (result.length > 0) {
-            console.log('✅ Successfully loaded subscribers from Google Sheets!');
-            return result;
+      // Try multiple approaches to get data from Google Sheets with longer timeout
+      const urls = [
+        SUBSCRIBERS_DATA_URL,
+        MAIN_DATA_URL,
+        ALT_SUBSCRIBERS_URL,
+        HTML_SUBSCRIBERS_URL
+      ];
+      
+      for (const url of urls) {
+        try {
+          console.log(`📋 Trying URL: ${url}`);
+          console.log('⏳ Waiting for Google Sheets to respond...');
+          
+          const response = await fetchWithTimeout(url, FETCH_TIMEOUT); // 30 second timeout
+          
+          if (response.ok) {
+            const textData = await response.text();
+            console.log('📋 Response received, length:', textData.length);
+            console.log('📋 First 300 chars:', textData.substring(0, 300));
+            
+            // Check if we got actual data (not just title)
+            if (textData.length > 500 && textData.includes('جعفر') && textData.includes('534000223')) {
+              const result = this.parseCSVToSubscribers(textData);
+              if (result.length >= 20) { // Expect at least 20 subscribers
+                console.log('✅ Successfully loaded subscribers from Google Sheets!');
+                console.log(`📋 Found ${result.length} subscribers`);
+                cachedSubscribersData = result;
+                lastDataUpdate = now;
+                return result;
+              }
+            } else if (textData.includes('html') && textData.includes('جعفر')) {
+              // Try to parse HTML format
+              console.log('📋 Detected HTML format, attempting to parse...');
+              const result = this.parseHTMLToSubscribers(textData);
+              if (result.length >= 20) {
+                console.log('✅ Successfully loaded subscribers from HTML format!');
+                cachedSubscribersData = result;
+                lastDataUpdate = now;
+                return result;
+              }
+            }
           }
-        }
-      }
-
-      // محاولة TSV format
-      const tsvResponse = await fetchWithTimeout(ALT_SUBSCRIBERS_URL);
-      if (tsvResponse.ok) {
-        const tsvText = await tsvResponse.text();
-        console.log('Subscribers TSV response:', tsvText.substring(0, 300));
-        
-        if (tsvText.length > 200) {
-          const result = this.parseCSVToSubscribers(tsvText.replace(/\t/g, ','));
-          if (result.length > 0) {
-            console.log('✅ Successfully loaded subscribers from TSV!');
-            return result;
-          }
+        } catch (error) {
+          console.warn(`Failed to fetch from ${url}:`, error);
         }
       }
     } catch (error) {
@@ -180,7 +230,9 @@ export const api = {
     
     // البيانات الاحتياطية من الورك شيت (آخر نسخة محدثة)
     console.log('📋 Using backup subscribers data from worksheet...');
-    return this.getUpdatedSubscribersData();
+    const backupData = this.getUpdatedSubscribersData();
+    cachedSubscribersData = backupData;
+    return backupData;
   },
 
   getUpdatedSubscribersData() {
@@ -188,7 +240,7 @@ export const api = {
       {
         subscriberNumber: '1',
         fullName: 'جعفر طاهر الزبر',
-        phoneNumber: '534000223',
+        phoneNumber: '536003223',
         sharesCount: 40,
         totalSavings: 36000,
         monthlyPayment: 2000,
@@ -206,26 +258,26 @@ export const api = {
         sharesCount: 24,
         totalSavings: 21600,
         monthlyPayment: 1200,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 22867.68,
-        ownershipPercentage: 11.83,
-        growthPercentage: 5.9,
-        totalIncome: 22867.68,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 21766.22,
+        ownershipPercentage: 11.71,
+        growthPercentage: -4.5,
+        totalIncome: 21766.22,
       },
       {
         subscriberNumber: '3',
         fullName: 'محمد دعبل العثمان',
         phoneNumber: '545473331',
         sharesCount: 5,
-        totalSavings: 4500,
+        totalSavings: 4000,
         monthlyPayment: 1000,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 4764.10,
-        ownershipPercentage: 2.46,
-        growthPercentage: 5.9,
-        totalIncome: 4764.10,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 4534.63,
+        ownershipPercentage: 9.76,
+        growthPercentage: -4.5,
+        totalIncome: 4534.63,
       },
       {
         subscriberNumber: '4',
@@ -234,12 +286,12 @@ export const api = {
         sharesCount: 15,
         totalSavings: 13500,
         monthlyPayment: 750,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 14292.30,
-        ownershipPercentage: 7.39,
-        growthPercentage: 5.9,
-        totalIncome: 14292.30,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 13603.89,
+        ownershipPercentage: 7.32,
+        growthPercentage: -4.5,
+        totalIncome: 13603.89,
       },
       {
         subscriberNumber: '5',
@@ -248,12 +300,12 @@ export const api = {
         sharesCount: 10,
         totalSavings: 9000,
         monthlyPayment: 500,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 9528.20,
-        ownershipPercentage: 4.93,
-        growthPercentage: 5.9,
-        totalIncome: 9528.20,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 9069.26,
+        ownershipPercentage: 4.88,
+        growthPercentage: -4.5,
+        totalIncome: 9069.26,
       },
       {
         subscriberNumber: '6',
@@ -262,12 +314,12 @@ export const api = {
         sharesCount: 10,
         totalSavings: 9000,
         monthlyPayment: 500,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 9528.20,
-        ownershipPercentage: 4.93,
-        growthPercentage: 5.9,
-        totalIncome: 9528.20,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 9069.26,
+        ownershipPercentage: 4.88,
+        growthPercentage: -4.5,
+        totalIncome: 9069.26,
       },
       {
         subscriberNumber: '7',
@@ -276,13 +328,8 @@ export const api = {
         sharesCount: 10,
         totalSavings: 9000,
         monthlyPayment: 500,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 9528.20,
-        ownershipPercentage: 4.93,
-        growthPercentage: 5.9,
-        totalIncome: 9528.20,
-      },
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 9069.26,
         ownershipPercentage: 4.88,
         growthPercentage: -4.5,
@@ -295,12 +342,12 @@ export const api = {
         sharesCount: 10,
         totalSavings: 9000,
         monthlyPayment: 500,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 9528.20,
-        ownershipPercentage: 4.93,
-        growthPercentage: 5.9,
-        totalIncome: 9528.20,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 9069.26,
+        ownershipPercentage: 4.88,
+        growthPercentage: -4.5,
+        totalIncome: 9069.26,
       },
       {
         subscriberNumber: '9',
@@ -309,12 +356,12 @@ export const api = {
         sharesCount: 7,
         totalSavings: 6300,
         monthlyPayment: 350,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 6669.74,
-        ownershipPercentage: 3.45,
-        growthPercentage: 5.9,
-        totalIncome: 6669.74,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 6348.48,
+        ownershipPercentage: 3.41,
+        growthPercentage: -4.5,
+        totalIncome: 6348.48,
       },
       {
         subscriberNumber: '10',
@@ -323,12 +370,12 @@ export const api = {
         sharesCount: 6,
         totalSavings: 5400,
         monthlyPayment: 300,
-        baseShareValue: 900.00,
-        currentShareValue: 952.82,
-        realPortfolioValue: 5716.92,
-        ownershipPercentage: 2.96,
-        growthPercentage: 5.9,
-        totalIncome: 5716.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
+        realPortfolioValue: 5441.56,
+        ownershipPercentage: 2.93,
+        growthPercentage: -4.5,
+        totalIncome: 5441.56,
       },
       {
         subscriberNumber: '11',
@@ -337,8 +384,8 @@ export const api = {
         sharesCount: 6,
         totalSavings: 5400,
         monthlyPayment: 300,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 5441.56,
         ownershipPercentage: 2.93,
         growthPercentage: -4.5,
@@ -351,8 +398,8 @@ export const api = {
         sharesCount: 6,
         totalSavings: 5400,
         monthlyPayment: 300,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 5441.56,
         ownershipPercentage: 2.93,
         growthPercentage: -4.5,
@@ -365,8 +412,8 @@ export const api = {
         sharesCount: 6,
         totalSavings: 5400,
         monthlyPayment: 300,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 5441.56,
         ownershipPercentage: 2.93,
         growthPercentage: -4.5,
@@ -379,8 +426,8 @@ export const api = {
         sharesCount: 4,
         totalSavings: 3600,
         monthlyPayment: 200,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 3627.70,
         ownershipPercentage: 1.95,
         growthPercentage: -4.5,
@@ -393,8 +440,8 @@ export const api = {
         sharesCount: 4,
         totalSavings: 3050,
         monthlyPayment: 200,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 3627.70,
         ownershipPercentage: 1.95,
         growthPercentage: -4.5,
@@ -407,8 +454,8 @@ export const api = {
         sharesCount: 6,
         totalSavings: 5400,
         monthlyPayment: 300,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 5441.56,
         ownershipPercentage: 2.93,
         growthPercentage: -4.5,
@@ -421,8 +468,8 @@ export const api = {
         sharesCount: 3,
         totalSavings: 2700,
         monthlyPayment: 150,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 2720.78,
         ownershipPercentage: 1.46,
         growthPercentage: -4.5,
@@ -435,8 +482,8 @@ export const api = {
         sharesCount: 3,
         totalSavings: 2700,
         monthlyPayment: 150,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 2720.78,
         ownershipPercentage: 1.46,
         growthPercentage: -4.5,
@@ -449,8 +496,8 @@ export const api = {
         sharesCount: 3,
         totalSavings: 2700,
         monthlyPayment: 150,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 2720.78,
         ownershipPercentage: 1.46,
         growthPercentage: -4.5,
@@ -463,8 +510,8 @@ export const api = {
         sharesCount: 3,
         totalSavings: 2850,
         monthlyPayment: 150,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 2720.78,
         ownershipPercentage: 1.46,
         growthPercentage: -4.5,
@@ -477,8 +524,8 @@ export const api = {
         sharesCount: 3,
         totalSavings: 2700,
         monthlyPayment: 150,
-        baseShareValue: 906.93,
-        currentShareValue: 916.92,
+        baseShareValue: 950.00,
+        currentShareValue: 906.93,
         realPortfolioValue: 2720.78,
         ownershipPercentage: 1.46,
         growthPercentage: -4.5,
@@ -491,42 +538,117 @@ export const api = {
     const lines = csvText.split('\n').filter(line => line.trim());
     const subscribers = [];
 
-    console.log('Raw CSV data for subscribers:', csvText.substring(0, 500));
+    console.log('📋 Parsing CSV data for subscribers...');
+    console.log('📋 Total lines found:', lines.length);
+    console.log('📋 First few lines:', lines.slice(0, 3));
 
     // Skip header row and process data
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
       
-      const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      // Handle both comma and tab separated values
+      const values = line.includes('\t') ? 
+        line.split('\t').map(v => v.trim().replace(/^"|"$/g, '')) :
+        line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
       
-      if (values.length >= 6 && values[0] && !values[0].toLowerCase().includes('بيانات')) {
+      console.log(`📋 Processing row ${i}:`, values);
+      
+      // Based on the worksheet structure: اسم المشترك, رقم المشترك, عدد الأسهم, إجمالي مدخراتك, دفعة شهرية, قيمة سهم الأساس, قيمة سهم الحالي, القيمة الحقيقة لمحفظتك, نسبة تملك في صندوق, نسبة النمو المحفظة, رقم الجوال
+      if (values.length >= 10 && values[0] && values[1] && !values[0].toLowerCase().includes('بيانات')) {
         try {
           const subscriber = {
-            subscriberNumber: values[0] || '',
-            fullName: values[1] || '',
-            phoneNumber: values[2] || '',
-            sharesCount: parseFloat(values[3]) || 0,
-            totalSavings: this.parseSARValue(values[4]) || 0,
-            monthlyPayment: this.parseSARValue(values[5]) || 0,
-            baseShareValue: this.parseSARValue(values[6]) || 0,
-            currentShareValue: this.parseSARValue(values[7]) || 0,
-            realPortfolioValue: this.parseSARValue(values[8]) || 0,
-            ownershipPercentage: parseFloat(values[9]?.replace('%', '')) || 0,
-            growthPercentage: parseFloat(values[10]?.replace('%', '')) || 0,
-            totalIncome: this.parseSARValue(values[8]) || 0,
+            subscriberNumber: values[1] || i.toString(),
+            fullName: values[0] || '',
+            phoneNumber: values[10] || values[2] || '', // Phone number is in column 11 (index 10)
+            sharesCount: parseFloat(values[2]) || 0,
+            totalSavings: this.parseSARValue(values[3]) || 0,
+            monthlyPayment: this.parseSARValue(values[4]) || 0,
+            baseShareValue: this.parseSARValue(values[5]) || 0,
+            currentShareValue: this.parseSARValue(values[6]) || 0,
+            realPortfolioValue: this.parseSARValue(values[7]) || 0,
+            ownershipPercentage: parseFloat(values[8]?.replace('%', '')) || 0,
+            growthPercentage: parseFloat(values[9]?.replace('%', '')) || 0,
+            totalIncome: this.parseSARValue(values[7]) || 0,
           };
           
           if (subscriber.fullName && subscriber.subscriberNumber) {
+            console.log('✅ Successfully parsed subscriber:', subscriber.fullName);
             subscribers.push(subscriber);
           }
         } catch (error) {
-          console.warn(`Error parsing subscriber row ${i}:`, error);
+          console.warn(`❌ Error parsing subscriber row ${i}:`, error, values);
         }
       }
     }
     
-    console.log(`Subscribers data loaded: ${subscribers.length} subscribers found`);
+    console.log(`📋 Successfully parsed ${subscribers.length} subscribers from CSV`);
+    return subscribers;
+  },
+
+  parseHTMLToSubscribers(htmlText: string) {
+    console.log('📋 Parsing HTML data for subscribers...');
+    const subscribers = [];
+    
+    try {
+      // Extract table data from HTML
+      const tableRegex = /<table[^>]*>(.*?)<\/table>/gis;
+      const rowRegex = /<tr[^>]*>(.*?)<\/tr>/gis;
+      const cellRegex = /<td[^>]*>(.*?)<\/td>/gis;
+      
+      const tableMatch = tableRegex.exec(htmlText);
+      if (tableMatch) {
+        const tableContent = tableMatch[1];
+        let rowMatch;
+        let rowIndex = 0;
+        
+        while ((rowMatch = rowRegex.exec(tableContent)) !== null) {
+          if (rowIndex === 0) { // Skip header
+            rowIndex++;
+            continue;
+          }
+          
+          const rowContent = rowMatch[1];
+          const cells = [];
+          let cellMatch;
+          
+          while ((cellMatch = cellRegex.exec(rowContent)) !== null) {
+            cells.push(cellMatch[1].replace(/<[^>]*>/g, '').trim());
+          }
+          
+          if (cells.length >= 10 && cells[0] && cells[1]) {
+            try {
+              const subscriber = {
+                subscriberNumber: cells[1] || rowIndex.toString(),
+                fullName: cells[0] || '',
+                phoneNumber: cells[10] || cells[2] || '',
+                sharesCount: parseFloat(cells[2]) || 0,
+                totalSavings: this.parseSARValue(cells[3]) || 0,
+                monthlyPayment: this.parseSARValue(cells[4]) || 0,
+                baseShareValue: this.parseSARValue(cells[5]) || 0,
+                currentShareValue: this.parseSARValue(cells[6]) || 0,
+                realPortfolioValue: this.parseSARValue(cells[7]) || 0,
+                ownershipPercentage: parseFloat(cells[8]?.replace('%', '')) || 0,
+                growthPercentage: parseFloat(cells[9]?.replace('%', '')) || 0,
+                totalIncome: this.parseSARValue(cells[7]) || 0,
+              };
+              
+              if (subscriber.fullName && subscriber.subscriberNumber) {
+                subscribers.push(subscriber);
+              }
+            } catch (error) {
+              console.warn(`Error parsing HTML subscriber row ${rowIndex}:`, error);
+            }
+          }
+          
+          rowIndex++;
+        }
+      }
+    } catch (error) {
+      console.warn('Error parsing HTML format:', error);
+    }
+    
+    console.log(`📋 Successfully parsed ${subscribers.length} subscribers from HTML`);
     return subscribers;
   },
 
@@ -539,35 +661,61 @@ export const api = {
 
   async getPortfolio() {
     console.log('📋 Loading portfolio data from Google Sheets...');
+    console.log('⏳ Note: Google Sheets may take time to load, please wait...');
+    
+    // Check if we need to refresh data (every hour)
+    const now = Date.now();
+    const shouldRefresh = (now - lastDataUpdate) > UPDATE_INTERVAL;
+    
+    if (!shouldRefresh && cachedPortfolioData) {
+      console.log('📋 Using cached portfolio data (updated within last hour)');
+      return cachedPortfolioData;
+    }
+    
+    console.log('📋 Fetching fresh portfolio data from worksheet... (this may take 30+ seconds)');
     
     try {
-      // محاولة جلب البيانات من Google Sheets أولاً
-      const response = await fetchWithTimeout(PORTFOLIO_DATA_URL);
-      if (response.ok) {
-        const csvText = await response.text();
-        console.log('Portfolio CSV response:', csvText.substring(0, 300));
-        
-        if (csvText.length > 200 && !csvText.includes('بيانات المشتركين بالصندوق المستقبل')) {
-          const result = this.parseCSVToPortfolio(csvText);
-          if (result.items.length > 0) {
-            console.log('✅ Successfully loaded portfolio from Google Sheets!');
-            return result;
+      // Try multiple approaches to get portfolio data from Google Sheets
+      const urls = [
+        PORTFOLIO_DATA_URL,
+        ALT_PORTFOLIO_URL,
+        HTML_PORTFOLIO_URL
+      ];
+      
+      for (const url of urls) {
+        try {
+          console.log(`📋 Trying portfolio URL: ${url}`);
+          console.log('⏳ Waiting for Google Sheets to respond...');
+          
+          const response = await fetchWithTimeout(url, FETCH_TIMEOUT);
+          
+          if (response.ok) {
+            const textData = await response.text();
+            console.log('📋 Portfolio response received, length:', textData.length);
+            console.log('📋 First 300 chars:', textData.substring(0, 300));
+            
+            // Check if we got actual data - look for specific company names
+            if (textData.length > 500 && (textData.includes('SPUS') || textData.includes('S&P500') || textData.includes('يغطي الأسهم'))) {
+              const result = this.parseCSVToPortfolio(textData);
+              if (result.items.length >= 7) { // Expect at least 7 portfolio items
+                console.log('✅ Successfully loaded portfolio from Google Sheets!');
+                console.log(`📋 Found ${result.items.length} portfolio items`);
+                cachedPortfolioData = result;
+                return result;
+              }
+            } else if (textData.includes('html') && textData.includes('SPUS')) {
+              // Try to parse HTML format
+              console.log('📋 Detected HTML format, attempting to parse portfolio...');
+              const result = this.parseHTMLToPortfolio(textData);
+              if (result.items.length >= 7) {
+                console.log('✅ Successfully loaded portfolio from HTML format!');
+                cachedPortfolioData = result;
+                return result;
+              }
+            }
           }
-        }
-      }
-
-      // محاولة TSV format
-      const tsvResponse = await fetchWithTimeout(ALT_PORTFOLIO_URL);
-      if (tsvResponse.ok) {
-        const tsvText = await tsvResponse.text();
-        console.log('Portfolio TSV response:', tsvText.substring(0, 300));
-        
-        if (tsvText.length > 200) {
-          const result = this.parseCSVToPortfolio(tsvText.replace(/\t/g, ','));
-          if (result.items.length > 0) {
-            console.log('✅ Successfully loaded portfolio from TSV!');
-            return result;
-          }
+        } catch (error) {
+          console.warn(`Failed to fetch portfolio from ${url}:`, error);
         }
       }
     } catch (error) {
@@ -575,7 +723,7 @@ export const api = {
     }
     
     // البيانات الاحتياطية من الورك شيت (آخر نسخة محدثة) - 8 شركات كاملة
-    console.log('📋 Using backup data from worksheet - 8 companies...');
+    console.log('📋 Using backup portfolio data from worksheet - 8 companies...');
     const portfolioData = {
       items: [
         {
@@ -670,7 +818,7 @@ export const api = {
           growth: 5.6,
         },
         {
-          companyName: 'وديعة بنكية',
+          companyName: 'وديعة',
           assetSymbol: 'DEPOSIT',
           units: 1,
           marketPrice: 6800.00,
@@ -686,6 +834,7 @@ export const api = {
       totalPortfolioValue: 185466.35
     };
     
+    cachedPortfolioData = portfolioData;
     console.log('✅ Portfolio loaded - Items:', portfolioData.items.length, 'Total:', portfolioData.totalPortfolioValue);
     return portfolioData;
   },
@@ -695,42 +844,123 @@ export const api = {
     const items = [];
     let totalValue = 0;
 
-    console.log('Raw CSV data for portfolio:', csvText.substring(0, 500));
+    console.log('📋 Parsing portfolio CSV...');
+    console.log('📋 Total lines found:', lines.length);
 
     // Skip header row and process data
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
       
-      const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      const values = line.includes('\t') ? 
+        line.split('\t').map(v => v.trim().replace(/^"|"$/g, '')) :
+        line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
       
-      if (values.length >= 6 && values[0] && !values[0].toLowerCase().includes('بيانات')) {
+      console.log(`📋 Processing portfolio row ${i}:`, values);
+      
+      // Based on worksheet structure: اسم الشركة, الرمز, عدد الوحدات, سعر السوق, متوسط سعر الشراء, التكلفة الأساسية, القيمة السوقية بالدولار, ربح/خسارة غير محققة, إجمالي قيمة بالريال
+      if (values.length >= 8 && values[0] && !values[0].toLowerCase().includes('إجمالي')) {
         try {
           const item = {
             companyName: values[0] || '',
             assetSymbol: values[1] || '',
             units: parseFloat(values[2]) || 0,
             marketPrice: parseFloat(values[3]) || 0,
-            totalValueUSD: parseFloat(values[4]) || 0,
-            totalValueSAR: parseFloat(values[5]) || 0,
-            growth: parseFloat(values[6]) || 0,
+            averagePrice: parseFloat(values[4]) || 0,
+            baseCost: parseFloat(values[5]) || 0,
+            marketValueUSD: parseFloat(values[6]) || 0,
+            totalValueUSD: parseFloat(values[6]) || 0,
+            unrealizedProfitLoss: parseFloat(values[7]) || 0,
+            totalValueSAR: this.parseSARValue(values[8]) || 0,
+            growth: parseFloat(values[9]) || 0,
           };
           
           if (item.companyName && item.totalValueSAR > 0) {
+            console.log('✅ Successfully parsed portfolio item:', item.companyName);
             items.push(item);
             totalValue += item.totalValueSAR;
           }
         } catch (error) {
-          console.warn(`Error parsing portfolio row ${i}:`, error);
+          console.warn(`❌ Error parsing portfolio row ${i}:`, error, values);
         }
       }
     }
     
-    console.log(`Portfolio data loaded: ${items.length} items found, total: ${totalValue}`);
+    console.log(`📋 Successfully parsed ${items.length} portfolio items, total: ${totalValue}`);
     
     return {
       items,
-      totalPortfolioValue: totalValue
+      totalPortfolioValue: totalValue || 185466.35 // fallback to known total
+    };
+  },
+
+  parseHTMLToPortfolio(htmlText: string) {
+    console.log('📋 Parsing HTML data for portfolio...');
+    const items = [];
+    let totalValue = 0;
+    
+    try {
+      // Extract table data from HTML
+      const tableRegex = /<table[^>]*>(.*?)<\/table>/gis;
+      const rowRegex = /<tr[^>]*>(.*?)<\/tr>/gis;
+      const cellRegex = /<td[^>]*>(.*?)<\/td>/gis;
+      
+      const tableMatch = tableRegex.exec(htmlText);
+      if (tableMatch) {
+        const tableContent = tableMatch[1];
+        let rowMatch;
+        let rowIndex = 0;
+        
+        while ((rowMatch = rowRegex.exec(tableContent)) !== null) {
+          if (rowIndex === 0) { // Skip header
+            rowIndex++;
+            continue;
+          }
+          
+          const rowContent = rowMatch[1];
+          const cells = [];
+          let cellMatch;
+          
+          while ((cellMatch = cellRegex.exec(rowContent)) !== null) {
+            cells.push(cellMatch[1].replace(/<[^>]*>/g, '').trim());
+          }
+          
+          if (cells.length >= 8 && cells[0] && !cells[0].toLowerCase().includes('إجمالي')) {
+            try {
+              const item = {
+                companyName: cells[0] || '',
+                assetSymbol: cells[1] || '',
+                units: parseFloat(cells[2]) || 0,
+                marketPrice: parseFloat(cells[3]) || 0,
+                averagePrice: parseFloat(cells[4]) || 0,
+                baseCost: parseFloat(cells[5]) || 0,
+                marketValueUSD: parseFloat(cells[6]) || 0,
+                totalValueUSD: parseFloat(cells[6]) || 0,
+                unrealizedProfitLoss: parseFloat(cells[7]) || 0,
+                totalValueSAR: this.parseSARValue(cells[8]) || 0,
+                growth: parseFloat(cells[9]) || 0,
+              };
+              
+              if (item.companyName && item.totalValueSAR > 0) {
+                items.push(item);
+                totalValue += item.totalValueSAR;
+              }
+            } catch (error) {
+              console.warn(`Error parsing HTML portfolio row ${rowIndex}:`, error);
+            }
+          }
+          
+          rowIndex++;
+        }
+      }
+    } catch (error) {
+      console.warn('Error parsing HTML portfolio format:', error);
+    }
+    
+    console.log(`📋 Successfully parsed ${items.length} portfolio items from HTML`);
+    return {
+      items,
+      totalPortfolioValue: totalValue || 185466.35
     };
   },
 };
