@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>اختبار - إدارة المحافظ الاستثمارية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-gray-50 font-cairo text-gray-900">
+    <div id="root">
+      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: #f9fafb;">
+        <div style="text-align: center; padding: 2rem;">
+          <div style="width: 4rem; height: 4rem; background-color: #0284c7; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+            <span style="color: white; font-size: 1.5rem; font-weight: bold;">م</span>
+          </div>
+          <h1 style="font-size: 1.5rem; font-weight: bold; color: #111827; margin-bottom: 0.5rem;">جاري التحميل...</h1>
+          <p style="color: #6b7280;">يتم تحميل التطبيق، يرجى الانتظار</p>
+          <div style="margin-top: 1rem;">
+            <div style="width: 2rem; height: 2rem; border: 2px solid #e5e7eb; border-top: 2px solid #0284c7; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/test-main.tsx"></script>
+    
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <script>
+      // Debug information
+      console.log('🔍 بدء تشخيص التطبيق...');
+      console.log('📍 الموقع:', window.location.href);
+      console.log('🌐 User Agent:', navigator.userAgent);
+      console.log('📱 الشاشة:', window.screen.width + 'x' + window.screen.height);
+      console.log('🔧 JavaScript مفعل:', typeof window !== 'undefined');
+      
+      // Check if React is loading
+      setTimeout(() => {
+        const root = document.getElementById('root');
+        if (root && root.innerHTML.includes('جاري التحميل')) {
+          console.error('❌ التطبيق لم يتم تحميله بعد 5 ثوان');
+          root.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: #fef2f2;">
+              <div style="text-align: center; padding: 2rem; background: white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 500px;">
+                <div style="width: 4rem; height: 4rem; background-color: #dc2626; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                  <span style="color: white; font-size: 1.5rem; font-weight: bold;">!</span>
+                </div>
+                <h1 style="font-size: 1.5rem; font-weight: bold; color: #dc2626; margin-bottom: 1rem;">خطأ في تحميل التطبيق</h1>
+                <p style="color: #6b7280; margin-bottom: 1rem;">لم يتم تحميل التطبيق بشكل صحيح. يرجى المحاولة مرة أخرى.</p>
+                <div style="background: #f3f4f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: right;">
+                  <h3 style="font-weight: bold; margin-bottom: 0.5rem;">الحلول المقترحة:</h3>
+                  <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;">• مسح cache المتصفح (Ctrl+Shift+Delete)</li>
+                    <li style="margin-bottom: 0.5rem;">• إعادة تحميل الصفحة (Ctrl+F5)</li>
+                    <li style="margin-bottom: 0.5rem;">• فتح الموقع في نافذة خاصة</li>
+                    <li style="margin-bottom: 0.5rem;">• التأكد من تفعيل JavaScript</li>
+                    <li style="margin-bottom: 0.5rem;">• تحديث المتصفح</li>
+                  </ul>
+                </div>
+                <button onclick="window.location.reload()" style="background: #0284c7; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: bold;">
+                  إعادة المحاولة
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }, 5000);
+      
+      // Check for errors
+      window.addEventListener('error', function(e) {
+        console.error('❌ خطأ JavaScript:', e.error);
+        console.error('📍 الملف:', e.filename);
+        console.error('📍 السطر:', e.lineno);
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('❌ Promise مرفوض:', e.reason);
+      });
+    </script>
+  </body>
+</html>

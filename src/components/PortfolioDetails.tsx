@@ -50,6 +50,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 257,
         marketPrice: 51.46,
         totalValueUSD: 13225.22,
+        unrealizedProfitLoss: 1624.22,
         totalValueSAR: 49594.58,
         growth: 14.0,
       },
@@ -59,6 +60,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 109,
         marketPrice: 36.73,
         totalValueUSD: 4003.57,
+        unrealizedProfitLoss: 167.57,
         totalValueSAR: 15013.39,
         growth: 4.4,
       },
@@ -68,6 +70,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 4,
         marketPrice: 29.31,
         totalValueUSD: 117.24,
+        unrealizedProfitLoss: -13.76,
         totalValueSAR: 439.65,
         growth: -10.5,
       },
@@ -77,6 +80,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 46,
         marketPrice: 47.49,
         totalValueUSD: 2184.54,
+        unrealizedProfitLoss: -349.46,
         totalValueSAR: 8192.03,
         growth: -13.8,
       },
@@ -86,6 +90,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 19,
         marketPrice: 96.01,
         totalValueUSD: 1824.19,
+        unrealizedProfitLoss: -175.81,
         totalValueSAR: 6840.71,
         growth: -8.8,
       },
@@ -95,6 +100,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 50,
         marketPrice: 1113.34,
         totalValueUSD: 55667,
+        unrealizedProfitLoss: 1667,
         totalValueSAR: 58467.00,
         growth: 3.1,
       },
@@ -104,6 +110,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 1,
         marketPrice: 40119.00,
         totalValueUSD: 40119,
+        unrealizedProfitLoss: 2119,
         totalValueSAR: 40119.00,
         growth: 5.6,
       },
@@ -113,6 +120,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
         units: 1,
         marketPrice: 6800.00,
         totalValueUSD: 6800,
+        unrealizedProfitLoss: 0,
         totalValueSAR: 6800.00,
         growth: 0.0,
       }
@@ -208,7 +216,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{item.units.toLocaleString()}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${item.marketPrice.toFixed(2)}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${item.totalValueUSD.toLocaleString()}</td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-bold ${item.unrealizedProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}">${item.unrealizedProfitLoss.toLocaleString()}</td>
+                    <td className={`px-4 py-4 whitespace-nowrap text-sm font-bold ${item.unrealizedProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>${item.unrealizedProfitLoss.toLocaleString()}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-bold text-primary-600">{item.totalValueSAR.toLocaleString()} ر.س</td>
                   </tr>
                 ))}

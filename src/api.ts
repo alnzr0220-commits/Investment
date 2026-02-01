@@ -227,7 +227,6 @@ export const api = {
         growthPercentage: -4.5,
         totalIncome: 4534.63,
       },
-      {
         subscriberNumber: '4',
         fullName: 'يوسف أحمد السحيمي',
         phoneNumber: '560090953',

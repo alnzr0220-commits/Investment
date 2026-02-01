@@ -20,7 +20,11 @@ export interface PortfolioItem {
   assetSymbol: string;
   units: number;
   marketPrice: number;
+  averagePrice?: number;
+  baseCost?: number;
+  marketValueUSD?: number;
   totalValueUSD: number;
+  unrealizedProfitLoss?: number;
   totalValueSAR: number;
   growth?: number;
   historicalData?: {

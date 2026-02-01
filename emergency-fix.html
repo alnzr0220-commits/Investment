@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الاستثمار - إصلاح طارئ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+        
+        .dashboard {
+            display: none;
+            background: white;
+            min-height: 100vh;
+        }
+        
+        .dashboard.active {
+            display: block;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .user-info h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e1e5e9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .info-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .portfolio {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .portfolio h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+        }
+        
+        .portfolio-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid #667eea;
+        }
+        
+        .total-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .company-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .company-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e1e5e9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .company-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .company-symbol {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .company-values {
+            text-align: left;
+        }
+        
+        .company-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .company-profit {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .profit-positive {
+            color: #10b981;
+        }
+        
+        .profit-negative {
+            color: #ef4444;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .admin-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .login-box {
+                padding: 30px 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .company-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <div class="logo-icon">م</div>
+                <h1>منصة الاستثمار</h1>
+                <p class="subtitle">إدارة المحافظ الاستثمارية</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="fullName">الاسم الكامل</label>
+                    <input type="text" id="fullName" placeholder="جعفر طاهر الزبر" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneNumber">رقم الجوال</label>
+                    <input type="text" id="phoneNumber" placeholder="534000223" required>
+                </div>
+                
+                <button type="submit" class="btn">تسجيل الدخول</button>
+                <button type="button" class="btn btn-admin" onclick="adminLogin()">دخول الإدمن</button>
+            </form>
+            
+            <div id="loginMessage"></div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="dashboard">
+        <div class="header">
+            <div>
+                <h2 id="welcomeMessage">مرحباً</h2>
+                <span id="userRole"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+        </div>
+        
+        <div class="container">
+            <div class="content">
+                <div class="user-info">
+                    <h3>بيانات المشترك</h3>
+                    <div class="info-grid" id="userInfoGrid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="portfolio">
+                    <h3>تفاصيل المحفظة الاستثمارية</h3>
+                    
+                    <div class="portfolio-summary">
+                        <div class="total-value">185,466.35 ر.س</div>
+                        <div>إجمالي قيمة المحفظة - 8 شركات</div>
+                    </div>
+                    
+                    <div class="company-list" id="portfolioList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 تطبيق الإصلاح الطارئ يعمل الآن');
+        
+        // Sample data - exact from worksheet
+        const users = {
+            'جعفر طاهر الزبر': {
+                phoneNumber: '534000223',
+                subscriberNumber: '1',
+                sharesCount: 42,
+                totalSavings: 38100,
+                monthlyPayment: 2100,
+                baseShareValue: 906.93,
+                currentShareValue: 916.92,
+                realPortfolioValue: 38090.89,
+                ownershipPercentage: 20.49,
+                growthPercentage: -4.5
+            },
+            'عباس صالح الزبر': {
+                phoneNumber: '504996691',
+                subscriberNumber: '2',
+                sharesCount: 24,
+                totalSavings: 21600,
+                monthlyPayment: 1200,
+                baseShareValue: 906.93,
+                currentShareValue: 916.92,
+                realPortfolioValue: 21766.22,
+                ownershipPercentage: 11.71,
+                growthPercentage: -4.5
+            },
+            'محمد دعبل العثمان': {
+                phoneNumber: '545473331',
+                subscriberNumber: '3',
+                sharesCount: 5,
+                totalSavings: 4000,
+                monthlyPayment: 1000,
+                baseShareValue: 906.93,
+                currentShareValue: 916.92,
+                realPortfolioValue: 4534.63,
+                ownershipPercentage: 9.76,
+                growthPercentage: -4.5
+            }
+        };
+        
+        // Portfolio data - exact from worksheet
+        const portfolio = [
+            { 
+                name: 'يغطي الأسهم الامريكية الكبرى (S&P500)', 
+                symbol: 'SPUS', 
+                units: 257,
+                price: 51.46,
+                value: 49594.58, 
+                profit: 1624.22 
+            },
+            { 
+                name: 'يغطي قطاع التكنلوجيا العالمي (بمافيه أمريكيا)', 
+                symbol: 'SPTE', 
+                units: 109,
+                price: 36.73,
+                value: 15013.39, 
+                profit: 167.57 
+            },
+            { 
+                name: 'الأسواق المتقدمة والناشئة بإستثناء أمريكا', 
+                symbol: 'SPWO', 
+                units: 4,
+                price: 29.31,
+                value: 439.65, 
+                profit: -13.76 
+            },
+            { 
+                name: 'البيتكوين', 
+                symbol: 'IBIT', 
+                units: 46,
+                price: 47.49,
+                value: 8192.03, 
+                profit: -349.46 
+            },
+            { 
+                name: 'الذهب', 
+                symbol: 'GLDM', 
+                units: 19,
+                price: 96.01,
+                value: 6840.71, 
+                profit: -175.81 
+            },
+            { 
+                name: 'الصكوك', 
+                symbol: 'Deeds', 
+                units: 50,
+                price: 1113.34,
+                value: 58467.00, 
+                profit: 1667 
+            },
+            { 
+                name: 'صندوق معايير للقروض', 
+                symbol: 'Loan Fund', 
+                units: 1,
+                price: 40119.00,
+                value: 40119.00, 
+                profit: 2119 
+            },
+            { 
+                name: 'الوديعة البنكية', 
+                symbol: 'DEPOSIT', 
+                units: 1,
+                price: 6800.00,
+                value: 6800.00, 
+                profit: 0 
+            }
+        ];
+        
+        let currentUser = null;
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const messageDiv = document.getElementById('loginMessage');
+            
+            console.log('محاولة تسجيل دخول:', fullName, phoneNumber);
+            
+            // Clear previous messages
+            messageDiv.innerHTML = '';
+            
+            // Check admin credentials first
+            if (fullName === 'مدير النظام الرئيسي' && phoneNumber === 'admin123') {
+                messageDiv.innerHTML = '<div class="success">✅ تسجيل دخول إدمن ناجح</div>';
+                setTimeout(() => {
+                    showDashboard('مدير النظام الرئيسي', true);
+                }, 1000);
+                return;
+            }
+            
+            // Check user credentials
+            if (users[fullName] && users[fullName].phoneNumber === phoneNumber) {
+                currentUser = { fullName, ...users[fullName] };
+                messageDiv.innerHTML = '<div class="success">✅ تسجيل دخول ناجح - مرحباً ' + fullName + '</div>';
+                setTimeout(() => {
+                    showDashboard(fullName, false);
+                }, 1000);
+            } else {
+                messageDiv.innerHTML = '<div class="error">❌ بيانات تسجيل الدخول غير صحيحة<br>تأكد من الاسم الكامل ورقم الجوال</div>';
+            }
+        });
+        
+        function adminLogin() {
+            document.getElementById('fullName').value = 'مدير النظام الرئيسي';
+            document.getElementById('phoneNumber').value = 'admin123';
+        }
+        
+        function showDashboard(userName, isAdmin) {
+            console.log('عرض لوحة التحكم لـ:', userName, 'إدمن:', isAdmin);
+            
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').classList.add('active');
+            
+            document.getElementById('welcomeMessage').textContent = `مرحباً ${userName}`;
+            document.getElementById('userRole').innerHTML = isAdmin ? '<span class="admin-badge">مدير النظام</span>' : '';
+            
+            if (!isAdmin && currentUser) {
+                populateUserInfo(currentUser);
+            } else if (isAdmin) {
+                populateAdminInfo();
+            }
+            
+            populatePortfolio();
+        }
+        
+        function populateUserInfo(user) {
+            const grid = document.getElementById('userInfoGrid');
+            grid.innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">اسم المشترك</div>
+                    <div class="info-value">${user.fullName}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">رقم المشترك</div>
+                    <div class="info-value">${user.subscriberNumber}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">عدد الأسهم</div>
+                    <div class="info-value">${user.sharesCount.toLocaleString()}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">إجمالي المدخرات</div>
+                    <div class="info-value">${user.totalSavings.toLocaleString()} ر.س</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">الدفعة الشهرية</div>
+                    <div class="info-value">${user.monthlyPayment.toLocaleString()} ر.س</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">قيمة سهم الأساس</div>
+                    <div class="info-value">${user.baseShareValue.toFixed(2)} ر.س</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">قيمة السهم الحالي</div>
+                    <div class="info-value">${user.currentShareValue.toFixed(2)} ر.س</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">القيمة الحقيقية للمحفظة</div>
+                    <div class="info-value">${user.realPortfolioValue.toLocaleString()} ر.س</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">نسبة التملك في الصندوق</div>
+                    <div class="info-value">${user.ownershipPercentage.toFixed(2)}%</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">نسبة النمو للمحفظة</div>
+                    <div class="info-value">${user.growthPercentage.toFixed(1)}%</div>
+                </div>
+            `;
+        }
+        
+        function populateAdminInfo() {
+            const grid = document.getElementById('userInfoGrid');
+            grid.innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">إجمالي المشتركين</div>
+                    <div class="info-value">21 مشترك</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">إجمالي الأسهم</div>
+                    <div class="info-value">205 سهم</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">إجمالي المدخرات</div>
+                    <div class="info-value">185,466 ر.س</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">عدد الشركات</div>
+                    <div class="info-value">8 شركات</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">أعلى نسبة ملكية</div>
+                    <div class="info-value">جعفر (20.49%)</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">أفضل استثمار</div>
+                    <div class="info-value">صندوق القروض (+2,119 ر.س)</div>
+                </div>
+            `;
+        }
+        
+        function populatePortfolio() {
+            const list = document.getElementById('portfolioList');
+            list.innerHTML = portfolio.map(company => `
+                <div class="company-item">
+                    <div>
+                        <div class="company-name">${company.name}</div>
+                        <div class="company-symbol">${company.symbol} - ${company.units} وحدة - ${company.price.toFixed(2)}$ للوحدة</div>
+                    </div>
+                    <div class="company-values">
+                        <div class="company-value">${company.value.toLocaleString()} ر.س</div>
+                        <div class="company-profit ${company.profit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                            ربح/خسارة غير محققة: ${company.profit >= 0 ? '+' : ''}${company.profit.toLocaleString()} ر.س
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function logout() {
+            console.log('تسجيل خروج');
+            currentUser = null;
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('dashboardScreen').classList.remove('active');
+            document.getElementById('fullName').value = '';
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('loginMessage').innerHTML = '';
+        }
+        
+        // Test data on console
+        console.log('📊 بيانات المستخدمين المتاحة:');
+        Object.keys(users).forEach(name => {
+            console.log(`- ${name}: ${users[name].phoneNumber}`);
+        });
+        console.log('🔐 بيانات الإدمن: مدير النظام الرئيسي / admin123');
+        console.log('💼 عدد الشركات في المحفظة:', portfolio.length);
+        
+        // Auto-fill for testing (remove in production)
+        setTimeout(() => {
+            if (window.location.search.includes('test=jaafar')) {
+                document.getElementById('fullName').value = 'جعفر طاهر الزبر';
+                document.getElementById('phoneNumber').value = '534000223';
+            } else if (window.location.search.includes('test=admin')) {
+                adminLogin();
+            }
+        }, 500);
+    </script>
+</body>
+</html>
