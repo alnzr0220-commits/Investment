@@ -69,13 +69,15 @@ export const api = {
   async login(fullName: string, phoneNumber: string) {
     // التحقق من بيانات الإدمن أولاً
     if (fullName === 'مدير النظام الرئيسي' && phoneNumber === 'admin123') {
+      console.log('⚡ Admin login - immediate response');
       return { 
         token: 'admin-token', 
         user: { fullName, phoneNumber, isAdmin: true } 
       };
     }
 
-    // البحث في البيانات المحلية المحدثة - استخدام البيانات الصحيحة دائماً
+    // **تحسين الأداء: البحث في البيانات المحلية فوراً**
+    console.log('⚡ Regular login - using local data immediately');
     const subscribers = this.getUpdatedSubscribersData();
     console.log('🔍 Login attempt for:', fullName, phoneNumber);
     console.log('🔍 Searching in', subscribers.length, 'subscribers');
@@ -85,17 +87,16 @@ export const api = {
     );
 
     if (user) {
-      console.log('✅ User found:', user.fullName, 'with correct data');
+      console.log('✅ User found immediately:', user.fullName);
       console.log('📊 User data:', {
         shares: user.sharesCount,
         ownership: user.ownershipPercentage,
         portfolioValue: user.realPortfolioValue
       });
       
-      // إنشاء token وإرجاع بيانات المستخدم المحدثة
+      // إنشاء token وإرجاع بيانات المستخدم المحدثة فوراً
       const token = 'local-token-' + user.subscriberNumber;
       
-      // تخزين البيانات المحدثة في localStorage
       const updatedUserData = {
         ...user,
         fullName: user.fullName,
@@ -112,8 +113,12 @@ export const api = {
         currentShareValue: user.currentShareValue
       };
       
+      // تخزين البيانات في localStorage
       localStorage.setItem('currentUser', JSON.stringify(updatedUserData));
-      console.log('💾 Stored updated user data in localStorage');
+      console.log('💾 Stored user data in localStorage immediately');
+      
+      // تحديث البيانات من Google Sheets في الخلفية (بدون انتظار)
+      this.updateUserDataInBackground(updatedUserData);
       
       return { 
         token, 
@@ -121,9 +126,9 @@ export const api = {
       };
     }
 
-    console.log('❌ User not found in updated data');
+    console.log('❌ User not found in local data');
     
-    // إذا لم يوجد في البيانات المحلية، جرب الخادم الخارجي
+    // إذا لم يوجد في البيانات المحلية، جرب الخادم الخارجي (سريع)
     try {
       const res = await fetch(`${API_URL}/api/public/login`, {
         method: 'POST',
@@ -144,70 +149,96 @@ export const api = {
   async getUserData(token: string) {
     console.log('🔍 Getting user data for token:', token);
     
-    // إذا كان token للإدمن، إرجاع بيانات الإدمن
+    // إذا كان token للإدمن، إرجاع بيانات الإدمن فوراً
     if (token === 'admin-token') {
       return { fullName: 'مدير النظام الرئيسي', phoneNumber: 'admin123', isAdmin: true };
     }
     
-    // **الإصلاح الجديد: استخدام نفس مصدر البيانات الذي يستخدمه الإدمن**
-    // بدلاً من الاعتماد على localStorage، نحصل على البيانات المحدثة مباشرة
-    try {
-      console.log('🔄 Getting fresh data using getAllSubscribers (same as admin)...');
-      const allSubscribers = await this.getAllSubscribers();
-      console.log('📋 Got', allSubscribers.length, 'subscribers from getAllSubscribers');
+    // **تحسين الأداء: استخدام البيانات المحلية فوراً**
+    console.log('⚡ Getting user data immediately from local data...');
+    
+    // البحث عن المستخدم الحالي في localStorage أولاً
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      console.log('📋 Found stored user:', userData.fullName);
       
-      // البحث عن المستخدم الحالي
-      let currentUser = null;
+      // التحقق من البيانات المحلية المحدثة
+      const subscribers = this.getUpdatedSubscribersData();
+      const updatedUser = subscribers.find(sub => 
+        sub.fullName === userData.fullName && sub.phoneNumber === userData.phoneNumber
+      );
       
-      // محاولة العثور على المستخدم من localStorage أولاً للحصول على معرفه
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        console.log('📋 Found stored user:', userData.fullName, userData.phoneNumber);
+      if (updatedUser) {
+        console.log('✅ Using updated local data for user:', updatedUser.fullName);
+        console.log('📊 User data:', {
+          shares: updatedUser.sharesCount,
+          ownership: updatedUser.ownershipPercentage,
+          portfolioValue: updatedUser.realPortfolioValue
+        });
         
-        // البحث عن هذا المستخدم في البيانات المحدثة
-        currentUser = allSubscribers.find(sub => 
-          sub.fullName === userData.fullName && sub.phoneNumber === userData.phoneNumber
+        // تحديث localStorage بالبيانات الجديدة
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        
+        // تحديث من Google Sheets في الخلفية (بدون انتظار)
+        this.updateUserDataInBackground(updatedUser);
+        
+        return updatedUser;
+      } else {
+        console.log('📋 Using cached user data');
+        return userData;
+      }
+    }
+
+    // إذا لم توجد بيانات محلية، استخدم البيانات الافتراضية
+    console.log('📋 No stored user, using default data');
+    const subscribers = this.getUpdatedSubscribersData();
+    const subscriberNumber = token.replace('local-token-', '');
+    const user = subscribers.find(sub => sub.subscriberNumber === subscriberNumber) || subscribers[0];
+    
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      console.log('💾 Stored default user data:', user.fullName);
+    }
+    
+    return user;
+  },
+
+  // دالة جديدة لتحديث بيانات المستخدم في الخلفية
+  async updateUserDataInBackground(currentUser: any) {
+    console.log('🔄 Starting background user data update...');
+    
+    try {
+      // محاولة سريعة للحصول على البيانات المحدثة
+      const allSubscribers = await this.getAllSubscribers();
+      
+      // البحث عن المستخدم المحدث
+      const updatedUser = allSubscribers.find(sub => 
+        sub.fullName === currentUser.fullName && sub.phoneNumber === currentUser.phoneNumber
+      );
+      
+      if (updatedUser) {
+        // مقارنة البيانات للتحقق من وجود تحديثات
+        const hasUpdates = (
+          updatedUser.sharesCount !== currentUser.sharesCount ||
+          updatedUser.ownershipPercentage !== currentUser.ownershipPercentage ||
+          updatedUser.realPortfolioValue !== currentUser.realPortfolioValue
         );
         
-        if (currentUser) {
-          console.log('✅ Found user in updated data:', currentUser.fullName);
-          console.log('📊 Updated user data:', {
-            shares: currentUser.sharesCount,
-            ownership: currentUser.ownershipPercentage,
-            portfolioValue: currentUser.realPortfolioValue
-          });
+        if (hasUpdates) {
+          console.log('✅ Background: Found user data updates');
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          
+          // يمكن إضافة event للإشعار بالتحديث إذا لزم الأمر
+          console.log('💾 Background: Updated user data in localStorage');
+        } else {
+          console.log('📋 Background: No user data changes detected');
         }
       }
       
-      // إذا لم نجد المستخدم، نحاول البحث بناءً على token
-      if (!currentUser) {
-        const subscriberNumber = token.replace('local-token-', '');
-        currentUser = allSubscribers.find(sub => sub.subscriberNumber === subscriberNumber);
-        console.log('🔍 Searched by subscriber number:', subscriberNumber, currentUser ? 'Found' : 'Not found');
-      }
-      
-      // إذا لم نجد المستخدم، نستخدم الأول كافتراضي (جعفر)
-      if (!currentUser && allSubscribers.length > 0) {
-        currentUser = allSubscribers[0];
-        console.log('📋 Using first subscriber as default:', currentUser.fullName);
-      }
-      
-      if (currentUser) {
-        // تحديث localStorage بالبيانات الجديدة
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        console.log('💾 Updated localStorage with fresh data');
-        return currentUser;
-      }
-      
     } catch (error) {
-      console.error('❌ Error getting fresh user data:', error);
+      console.warn('Background user update error:', error);
     }
-    
-    // في حالة الفشل، استخدم البيانات الاحتياطية
-    console.log('📋 Falling back to default data');
-    const defaultUser = this.getUpdatedSubscribersData()[0];
-    return defaultUser;
   },
 
   async saveConfig(sheetUrl: string) {
@@ -227,76 +258,90 @@ export const api = {
   },
 
   async getAllSubscribers() {
-    console.log('📋 Loading subscribers data from Google Sheets...');
-    console.log('⏳ Note: Google Sheets may take time to load, please wait...');
+    console.log('📋 Loading subscribers data...');
     
-    // Check if we need to refresh data (every hour)
+    // **تحسين الأداء: استخدام البيانات المحلية فوراً**
+    const localData = this.getUpdatedSubscribersData();
+    console.log('⚡ Using local data immediately (', localData.length, 'subscribers)');
+    
+    // تحديث الـ cache المحلي فوراً
+    cachedSubscribersData = localData;
+    lastDataUpdate = Date.now();
+    
+    // محاولة التحديث من Google Sheets في الخلفية (بدون انتظار)
+    this.updateFromGoogleSheetsInBackground();
+    
+    return localData;
+  },
+
+  // دالة جديدة للتحديث في الخلفية
+  async updateFromGoogleSheetsInBackground() {
+    // التحقق من آخر تحديث - إذا كان حديثاً، لا نحتاج للتحديث
     const now = Date.now();
-    const shouldRefresh = (now - lastDataUpdate) > UPDATE_INTERVAL;
+    const timeSinceLastUpdate = now - lastDataUpdate;
+    const shouldUpdate = timeSinceLastUpdate > UPDATE_INTERVAL; // ساعة واحدة
     
-    if (!shouldRefresh && cachedSubscribersData.length > 0) {
-      console.log('📋 Using cached subscribers data (updated within last hour)');
-      return cachedSubscribersData;
+    if (!shouldUpdate) {
+      console.log('📋 Data is fresh, skipping background update');
+      return;
     }
     
-    console.log('📋 Fetching fresh data from worksheet... (this may take 30+ seconds)');
+    console.log('🔄 Starting background update from Google Sheets...');
     
     try {
-      // Try multiple approaches to get data from Google Sheets with longer timeout
+      // محاولة سريعة للحصول على البيانات (timeout أقل)
       const urls = [
         SUBSCRIBERS_DATA_URL,
         MAIN_DATA_URL,
-        ALT_SUBSCRIBERS_URL,
-        HTML_SUBSCRIBERS_URL
+        ALT_SUBSCRIBERS_URL
       ];
       
       for (const url of urls) {
         try {
-          console.log(`📋 Trying URL: ${url}`);
-          console.log('⏳ Waiting for Google Sheets to respond...');
+          console.log(`📋 Background: Trying ${url}`);
           
-          const response = await fetchWithTimeout(url, FETCH_TIMEOUT); // 30 second timeout
+          // timeout أقل للتحديث في الخلفية (10 ثواني بدلاً من 30)
+          const response = await fetchWithTimeout(url, 10000);
           
           if (response.ok) {
             const textData = await response.text();
-            console.log('📋 Response received, length:', textData.length);
-            console.log('📋 First 300 chars:', textData.substring(0, 300));
+            console.log('📋 Background: Response length:', textData.length);
             
-            // Check if we got actual data (not just title)
+            // التحقق من وجود بيانات حقيقية
             if (textData.length > 500 && textData.includes('جعفر') && textData.includes('534000223')) {
               const result = this.parseCSVToSubscribers(textData);
-              if (result.length >= 20) { // Expect at least 20 subscribers
-                console.log('✅ Successfully loaded subscribers from Google Sheets!');
-                console.log(`📋 Found ${result.length} subscribers`);
-                cachedSubscribersData = result;
-                lastDataUpdate = now;
-                return result;
-              }
-            } else if (textData.includes('html') && textData.includes('جعفر')) {
-              // Try to parse HTML format
-              console.log('📋 Detected HTML format, attempting to parse...');
-              const result = this.parseHTMLToSubscribers(textData);
               if (result.length >= 20) {
-                console.log('✅ Successfully loaded subscribers from HTML format!');
+                console.log('✅ Background: Successfully updated from Google Sheets!');
                 cachedSubscribersData = result;
                 lastDataUpdate = now;
-                return result;
+                
+                // تحديث localStorage للمستخدم الحالي إذا وجد
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                  const userData = JSON.parse(currentUser);
+                  const updatedUser = result.find(sub => 
+                    sub.fullName === userData.fullName && sub.phoneNumber === userData.phoneNumber
+                  );
+                  if (updatedUser) {
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    console.log('💾 Background: Updated current user data');
+                  }
+                }
+                
+                return;
               }
             }
           }
         } catch (error) {
-          console.warn(`Failed to fetch from ${url}:`, error);
+          console.warn(`Background update failed for ${url}:`, error);
         }
       }
+      
+      console.log('📋 Background: All URLs failed, keeping local data');
+      
     } catch (error) {
-      console.warn('Failed to fetch subscribers from Google Sheets:', error);
+      console.warn('Background update error:', error);
     }
-    
-    // البيانات الاحتياطية من الورك شيت (آخر نسخة محدثة)
-    console.log('📋 Using backup subscribers data from worksheet...');
-    const backupData = this.getUpdatedSubscribersData();
-    cachedSubscribersData = backupData;
-    return backupData;
   },
 
   getUpdatedSubscribersData() {
@@ -724,71 +769,10 @@ export const api = {
   },
 
   async getPortfolio() {
-    console.log('📋 Loading portfolio data from Google Sheets...');
-    console.log('⏳ Note: Google Sheets may take time to load, please wait...');
+    console.log('📋 Loading portfolio data...');
     
-    // Check if we need to refresh data (every hour)
-    const now = Date.now();
-    const shouldRefresh = (now - lastDataUpdate) > UPDATE_INTERVAL;
-    
-    if (!shouldRefresh && cachedPortfolioData) {
-      console.log('📋 Using cached portfolio data (updated within last hour)');
-      return cachedPortfolioData;
-    }
-    
-    console.log('📋 Fetching fresh portfolio data from worksheet... (this may take 30+ seconds)');
-    
-    try {
-      // Try multiple approaches to get portfolio data from Google Sheets
-      const urls = [
-        PORTFOLIO_DATA_URL,
-        ALT_PORTFOLIO_URL,
-        HTML_PORTFOLIO_URL
-      ];
-      
-      for (const url of urls) {
-        try {
-          console.log(`📋 Trying portfolio URL: ${url}`);
-          console.log('⏳ Waiting for Google Sheets to respond...');
-          
-          const response = await fetchWithTimeout(url, FETCH_TIMEOUT);
-          
-          if (response.ok) {
-            const textData = await response.text();
-            console.log('📋 Portfolio response received, length:', textData.length);
-            console.log('📋 First 300 chars:', textData.substring(0, 300));
-            
-            // Check if we got actual data - look for specific company names
-            if (textData.length > 500 && (textData.includes('SPUS') || textData.includes('S&P500') || textData.includes('يغطي الأسهم'))) {
-              const result = this.parseCSVToPortfolio(textData);
-              if (result.items.length >= 7) { // Expect at least 7 portfolio items
-                console.log('✅ Successfully loaded portfolio from Google Sheets!');
-                console.log(`📋 Found ${result.items.length} portfolio items`);
-                cachedPortfolioData = result;
-                return result;
-              }
-            } else if (textData.includes('html') && textData.includes('SPUS')) {
-              // Try to parse HTML format
-              console.log('📋 Detected HTML format, attempting to parse portfolio...');
-              const result = this.parseHTMLToPortfolio(textData);
-              if (result.items.length >= 7) {
-                console.log('✅ Successfully loaded portfolio from HTML format!');
-                cachedPortfolioData = result;
-                return result;
-              }
-            }
-          }
-        } catch (error) {
-          console.warn(`Failed to fetch portfolio from ${url}:`, error);
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to fetch portfolio from Google Sheets:', error);
-    }
-    
-    // البيانات الاحتياطية من الورك شيت (آخر نسخة محدثة) - 8 شركات كاملة
-    console.log('📋 Using backup portfolio data from worksheet - 8 companies...');
-    const portfolioData = {
+    // **تحسين الأداء: استخدام البيانات المحلية فوراً**
+    const localPortfolioData = {
       items: [
         {
           companyName: 'يغطي الأسهم الامريكية الكبرى (S&P500)',
@@ -898,9 +882,58 @@ export const api = {
       totalPortfolioValue: 185466.35
     };
     
-    cachedPortfolioData = portfolioData;
-    console.log('✅ Portfolio loaded - Items:', portfolioData.items.length, 'Total:', portfolioData.totalPortfolioValue);
-    return portfolioData;
+    console.log('⚡ Using local portfolio data immediately');
+    
+    // تحديث الـ cache فوراً
+    cachedPortfolioData = localPortfolioData;
+    
+    // محاولة التحديث من Google Sheets في الخلفية
+    this.updatePortfolioFromGoogleSheetsInBackground();
+    
+    return localPortfolioData;
+  },
+
+  // دالة جديدة لتحديث المحفظة في الخلفية
+  async updatePortfolioFromGoogleSheetsInBackground() {
+    console.log('🔄 Starting background portfolio update from Google Sheets...');
+    
+    try {
+      const urls = [
+        PORTFOLIO_DATA_URL,
+        ALT_PORTFOLIO_URL
+      ];
+      
+      for (const url of urls) {
+        try {
+          console.log(`📋 Background portfolio: Trying ${url}`);
+          
+          // timeout أقل للتحديث في الخلفية
+          const response = await fetchWithTimeout(url, 10000);
+          
+          if (response.ok) {
+            const textData = await response.text();
+            console.log('📋 Background portfolio: Response length:', textData.length);
+            
+            // التحقق من وجود بيانات حقيقية
+            if (textData.length > 500 && (textData.includes('SPUS') || textData.includes('S&P500'))) {
+              const result = this.parseCSVToPortfolio(textData);
+              if (result.items.length >= 7) {
+                console.log('✅ Background: Successfully updated portfolio from Google Sheets!');
+                cachedPortfolioData = result;
+                return;
+              }
+            }
+          }
+        } catch (error) {
+          console.warn(`Background portfolio update failed for ${url}:`, error);
+        }
+      }
+      
+      console.log('📋 Background portfolio: All URLs failed, keeping local data');
+      
+    } catch (error) {
+      console.warn('Background portfolio update error:', error);
+    }
   },
 
   parseCSVToPortfolio(csvText: string) {

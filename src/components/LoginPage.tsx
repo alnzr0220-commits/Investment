@@ -34,13 +34,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     
     // Check if admin login first (before any validation)
     if (checkAdminMode(fullName, phoneNumber)) {
-      // Admin login
+      // Admin login - تحسين الأداء
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        // Navigate to admin dashboard (use the correct route)
-        navigate('/admin');
-      }, 1000);
+      console.log('⚡ Admin login - navigating immediately');
+      
+      // التنقل فوراً بدون تأخير
+      navigate('/admin');
+      setLoading(false);
       return;
     }
 
@@ -63,8 +63,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
     setLoading(true);
     try {
+      console.log('⚡ Regular user login - getting data quickly');
       const data = await api.login(fullName, phoneNumber);
       localStorage.setItem('token', data.token);
+      
+      // التنقل فوراً بعد تسجيل الدخول الناجح
       onLogin(data.user);
       navigate('/dashboard');
     } catch (err: any) {
