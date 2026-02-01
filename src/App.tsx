@@ -4,7 +4,7 @@ import { LoginPage } from './components/LoginPage';
 import { Dashboard } from './components/Dashboard';
 import { SimpleAdminDashboard } from './components/SimpleAdminDashboard';
 import { Subscriber, PortfolioData } from './types';
-import { api } from './api';
+import cleanApi from './api/cleanApi';
 import { ArrowRight } from 'lucide-react';
 
 // Wrapper for Admin View of User Dashboard
@@ -15,94 +15,16 @@ const AdminUserView = () => {
   const [portfolio, setPortfolio] = useState<PortfolioData>({ items: [], totalPortfolioValue: 0 });
 
   useEffect(() => {
-    console.log('🔄 Admin view loading portfolio data...');
-    api.getPortfolio()
+    console.log('🔄 Clean App: Loading portfolio data...');
+    cleanApi.getPortfolio()
       .then(data => {
-        console.log('✅ Admin view portfolio data loaded:', data);
+        console.log('✅ Clean App: Portfolio data loaded:', data);
         setPortfolio(data);
       })
       .catch(error => {
-        console.error('❌ Admin view failed to load portfolio:', error);
-        // استخدام البيانات الاحتياطية
-        const backupData = {
-          items: [
-            {
-              companyName: 'يغطي الأسهم الامريكية الكبرى (S&P500)',
-              assetSymbol: 'SPUS',
-              units: 257,
-              marketPrice: 51.46,
-              totalValueUSD: 13225.22,
-              totalValueSAR: 49594.58,
-              growth: 14.0,
-            },
-            {
-              companyName: 'يغطي قطاع التكنلوجيا العالمي (بمافيه أمريكيا)',
-              assetSymbol: 'SPTE',
-              units: 109,
-              marketPrice: 36.73,
-              totalValueUSD: 4003.57,
-              totalValueSAR: 15013.39,
-              growth: 4.4,
-            },
-            {
-              companyName: 'الأسواق المتقدمة والناشئة بإستثناء أمريكا',
-              assetSymbol: 'SPWO',
-              units: 4,
-              marketPrice: 29.31,
-              totalValueUSD: 117.24,
-              totalValueSAR: 439.65,
-              growth: -10.5,
-            },
-            {
-              companyName: 'البيتكوين',
-              assetSymbol: 'IBIT',
-              units: 46,
-              marketPrice: 47.49,
-              totalValueUSD: 2184.54,
-              totalValueSAR: 8192.03,
-              growth: -13.8,
-            },
-            {
-              companyName: 'ذهب',
-              assetSymbol: 'GLDM',
-              units: 19,
-              marketPrice: 96.01,
-              totalValueUSD: 1824.19,
-              totalValueSAR: 6840.71,
-              growth: -8.8,
-            },
-            {
-              companyName: 'صكوك',
-              assetSymbol: 'Deeds',
-              units: 50,
-              marketPrice: 1113.34,
-              totalValueUSD: 55667,
-              totalValueSAR: 58467.00,
-              growth: 3.1,
-            },
-            {
-              companyName: 'صندوق معايير للقروض',
-              assetSymbol: 'Loan Fund',
-              units: 1,
-              marketPrice: 40119.00,
-              totalValueUSD: 40119,
-              totalValueSAR: 40119.00,
-              growth: 5.6,
-            },
-            {
-              companyName: 'وديعة بنكية',
-              assetSymbol: 'DEPOSIT',
-              units: 1,
-              marketPrice: 6800.00,
-              totalValueUSD: 6800,
-              totalValueSAR: 6800.00,
-              growth: 0.0,
-            }
-          ],
-          totalPortfolioValue: 185466.35
-        };
-        console.log('🔄 Admin view using backup portfolio data');
-        setPortfolio(backupData);
+        console.error('❌ Clean App: Failed to load portfolio:', error);
+        // البيانات الاحتياطية
+        setPortfolio({ items: [], totalPortfolioValue: 0 });
       });
   }, []);
 
@@ -312,21 +234,22 @@ function App() {
   }, []);
 
   const handleLogin = (userData: any) => {
+    console.log('✅ Clean App: Login successful, setting user data');
     setUser({
-      id: '1',
+      id: userData.subscriberNumber,
       fullName: userData.fullName,
       subscriberNumber: userData.subscriberNumber,
-      sharesCount: Number(userData.sharesCount),
-      realPortfolioValue: Number(userData.realPortfolioValue),
-      totalIncome: Number(userData.totalIncome || 0),
-      totalSavings: Number(userData.totalSavings || 0),
-      monthlyPayment: Number(userData.monthlyPayment || 0),
-      baseShareValue: Number(userData.baseShareValue || 0),
-      currentShareValue: Number(userData.currentShareValue || 0),
-      ownershipPercentage: Number(userData.ownershipPercentage || 0),
-      growthPercentage: Number(userData.growthPercentage || 0),
+      sharesCount: userData.sharesCount,
+      realPortfolioValue: userData.realPortfolioValue,
+      totalIncome: userData.realPortfolioValue,
+      totalSavings: userData.totalSavings,
+      monthlyPayment: userData.monthlyPayment,
+      baseShareValue: userData.baseShareValue,
+      currentShareValue: userData.currentShareValue,
+      ownershipPercentage: userData.ownershipPercentage,
+      growthPercentage: userData.growthPercentage,
       profileImage: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userData.fullName),
-      phoneNumber: userData.phoneNumber || ''
+      phoneNumber: userData.phoneNumber
     });
   };
 

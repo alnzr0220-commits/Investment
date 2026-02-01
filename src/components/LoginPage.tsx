@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Phone, User, Lock, ArrowRight, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../api';
+import cleanApi from '../api/cleanApi';
 
 interface LoginPageProps {
   onLogin: (userData: any) => void;
@@ -63,7 +63,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
     setLoading(true);
     try {
-      const data = await api.login(fullName, phoneNumber);
+      const data = await cleanApi.login(fullName, phoneNumber);
       localStorage.setItem('token', data.token);
       onLogin(data.user);
       navigate('/dashboard');
