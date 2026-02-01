@@ -226,8 +226,12 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                   className="cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => setSelectedCompany(null)}
                 >
-                  <td colSpan={7} className="px-4 py-4 text-sm font-bold text-gray-900 text-right">إجمالي قيمة المحفظة</td>
-                  <td className="px-4 py-4 whitespace-nowrap text-lg font-bold text-primary-700">{actualData.totalPortfolioValue.toLocaleString()} ر.س</td>
+                  <td colSpan={7} className="px-4 py-4 text-sm font-bold text-gray-900 text-right">
+                    <div className="flex justify-between items-center">
+                      <span>إجمالي قيمة المحفظة</span>
+                      <span className="text-lg font-bold text-primary-700">{actualData.totalPortfolioValue.toLocaleString()} ر.س</span>
+                    </div>
+                  </td>
                 </tr>
               </tfoot>
             </table>

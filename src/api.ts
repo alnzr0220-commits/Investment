@@ -75,36 +75,54 @@ export const api = {
       };
     }
 
-    // البحث في البيانات المحلية المحدثة
+    // البحث في البيانات المحلية المحدثة - استخدام البيانات الصحيحة دائماً
     const subscribers = this.getUpdatedSubscribersData();
+    console.log('🔍 Login attempt for:', fullName, phoneNumber);
+    console.log('🔍 Searching in', subscribers.length, 'subscribers');
+    
     const user = subscribers.find(sub => 
       sub.fullName === fullName && sub.phoneNumber === phoneNumber
     );
 
     if (user) {
-      // إنشاء token وإرجاع بيانات المستخدم
+      console.log('✅ User found:', user.fullName, 'with correct data');
+      console.log('📊 User data:', {
+        shares: user.sharesCount,
+        ownership: user.ownershipPercentage,
+        portfolioValue: user.realPortfolioValue
+      });
+      
+      // إنشاء token وإرجاع بيانات المستخدم المحدثة
       const token = 'local-token-' + user.subscriberNumber;
-      localStorage.setItem('currentUser', JSON.stringify(user));
+      
+      // تخزين البيانات المحدثة في localStorage
+      const updatedUserData = {
+        ...user,
+        fullName: user.fullName,
+        phoneNumber: user.phoneNumber,
+        subscriberNumber: user.subscriberNumber,
+        sharesCount: user.sharesCount,
+        totalSavings: user.totalSavings,
+        monthlyPayment: user.monthlyPayment,
+        realPortfolioValue: user.realPortfolioValue,
+        ownershipPercentage: user.ownershipPercentage,
+        growthPercentage: user.growthPercentage,
+        totalIncome: user.totalIncome,
+        baseShareValue: user.baseShareValue,
+        currentShareValue: user.currentShareValue
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(updatedUserData));
+      console.log('💾 Stored updated user data in localStorage');
+      
       return { 
         token, 
-        user: {
-          ...user,
-          fullName: user.fullName,
-          phoneNumber: user.phoneNumber,
-          subscriberNumber: user.subscriberNumber,
-          sharesCount: user.sharesCount,
-          totalSavings: user.totalSavings,
-          monthlyPayment: user.monthlyPayment,
-          realPortfolioValue: user.realPortfolioValue,
-          ownershipPercentage: user.ownershipPercentage,
-          growthPercentage: user.growthPercentage,
-          totalIncome: user.totalIncome,
-          baseShareValue: user.baseShareValue,
-          currentShareValue: user.currentShareValue
-        }
+        user: updatedUserData
       };
     }
 
+    console.log('❌ User not found in updated data');
+    
     // إذا لم يوجد في البيانات المحلية، جرب الخادم الخارجي
     try {
       const res = await fetch(`${API_URL}/api/public/login`, {
@@ -124,20 +142,50 @@ export const api = {
   },
 
   async getUserData(token: string) {
-    // استخدام البيانات المحلية المحدثة
+    console.log('🔍 Getting user data for token:', token);
+    
+    // إذا كان token للإدمن، إرجاع بيانات الإدمن
+    if (token === 'admin-token') {
+      return { fullName: 'مدير النظام الرئيسي', phoneNumber: 'admin123', isAdmin: true };
+    }
+    
+    // استخدام البيانات المحلية المحدثة دائماً
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
       const userData = JSON.parse(currentUser);
-      console.log('Using local user data:', userData);
-      return userData;
+      console.log('📋 Found user in localStorage:', userData.fullName);
+      
+      // التحقق من أن البيانات محدثة - البحث في البيانات الحالية
+      const subscribers = this.getUpdatedSubscribersData();
+      const updatedUser = subscribers.find(sub => 
+        sub.fullName === userData.fullName && sub.phoneNumber === userData.phoneNumber
+      );
+      
+      if (updatedUser) {
+        console.log('✅ Using updated user data from getUpdatedSubscribersData');
+        console.log('📊 Updated data:', {
+          shares: updatedUser.sharesCount,
+          ownership: updatedUser.ownershipPercentage,
+          portfolioValue: updatedUser.realPortfolioValue
+        });
+        
+        // تحديث localStorage بالبيانات الجديدة
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        return updatedUser;
+      } else {
+        console.log('📋 Using cached user data (user not found in updated data)');
+        return userData;
+      }
     }
 
     // إذا لم توجد بيانات محلية، جرب العثور على المستخدم من قائمة المشتركين
     try {
       const subscribers = this.getUpdatedSubscribersData();
-      // محاولة العثور على المستخدم بناءً على token أو استخدام الأول كافتراضي
-      const user = subscribers[0]; // يمكن تحسين هذا لاحقاً للبحث بناءً على token
-      console.log('Using subscriber data:', user);
+      // محاولة العثور على المستخدم بناءً على token
+      const subscriberNumber = token.replace('local-token-', '');
+      const user = subscribers.find(sub => sub.subscriberNumber === subscriberNumber) || subscribers[0];
+      
+      console.log('📋 Using subscriber data for token:', subscriberNumber, user?.fullName);
       return user;
     } catch (error) {
       console.error('Error getting user data:', error);
