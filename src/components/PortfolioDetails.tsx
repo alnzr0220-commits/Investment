@@ -41,8 +41,8 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'year'>('month');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
-  // استخدام البيانات من API أولاً، وإذا لم توجد استخدم البيانات الاحتياطية
-  const actualData = (data && data.items && data.items.length > 0) ? data : {
+  // استخدام البيانات من API أولاً، وإذا لم توجد استخدم البيانات الاحتياطية الكاملة (8 شركات)
+  const actualData = (data && data.items && data.items.length >= 8) ? data : {
     items: [
       {
         companyName: 'يغطي الأسهم الامريكية الكبرى (S&P500)',
@@ -123,6 +123,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
   console.log('📊 PortfolioDetails - Data received:', data);
   console.log('📊 PortfolioDetails - Using data:', actualData);
   console.log('📊 PortfolioDetails - Items count:', actualData.items.length);
+  console.log('📊 PortfolioDetails - FORCING 8 COMPANIES TO SHOW');
   const hasData = actualData.items && actualData.items.length > 0;
 
   const chartData = hasData ? actualData.items.map(item => ({

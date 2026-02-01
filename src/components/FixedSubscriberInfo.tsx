@@ -28,11 +28,11 @@ export const FixedSubscriberInfo: React.FC<FixedSubscriberInfoProps> = ({ subscr
     { label: 'عدد الأسهم', value: subscriberData.sharesCount.toLocaleString(), icon: Activity, color: 'text-indigo-600', bg: 'bg-indigo-100' },
     { label: 'إجمالي المدخرات', value: `${subscriberData.totalSavings.toLocaleString()} ر.س`, icon: PiggyBank, color: 'text-emerald-600', bg: 'bg-emerald-100' },
     { label: 'الدفعة الشهرية', value: `${subscriberData.monthlyPayment.toLocaleString()} ر.س`, icon: CreditCard, color: 'text-purple-600', bg: 'bg-purple-100' },
-    { label: 'قيمة سهم الأساس', value: `${subscriberData.baseShareValue} ر.س`, icon: Wallet, color: 'text-gray-600', bg: 'bg-gray-100' },
-    { label: 'قيمة السهم الحالي', value: `${subscriberData.currentShareValue} ر.س`, icon: TrendingUp, color: 'text-orange-600', bg: 'bg-orange-100' },
+    { label: 'قيمة سهم الأساس', value: `${subscriberData.baseShareValue.toFixed(2)} ر.س`, icon: Wallet, color: 'text-gray-600', bg: 'bg-gray-100' },
+    { label: 'قيمة السهم الحالي', value: `${subscriberData.currentShareValue.toFixed(2)} ر.س`, icon: TrendingUp, color: 'text-orange-600', bg: 'bg-orange-100' },
     { label: 'القيمة الحقيقية للمحفظة', value: `${subscriberData.realPortfolioValue.toLocaleString()} ر.س`, icon: DollarSign, color: 'text-teal-600', bg: 'bg-teal-100' },
-    { label: 'نسبة التملك في الصندوق', value: `${subscriberData.ownershipPercentage}%`, icon: Percent, color: 'text-cyan-600', bg: 'bg-cyan-100' },
-    { label: 'نسبة النمو للمحفظة', value: `${subscriberData.growthPercentage}%`, icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-100' },
+    { label: 'نسبة التملك في الصندوق', value: `${subscriberData.ownershipPercentage.toFixed(2)}%`, icon: Percent, color: 'text-cyan-600', bg: 'bg-cyan-100' },
+    { label: 'نسبة النمو للمحفظة', value: `${subscriberData.growthPercentage.toFixed(1)}%`, icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-100' },
   ];
 
   return (
