@@ -7,7 +7,7 @@ interface FixedSubscriberInfoProps {
 }
 
 export const FixedSubscriberInfo: React.FC<FixedSubscriberInfoProps> = ({ subscriber }) => {
-  // استخدام بيانات المستخدم الممررة، مع التأكد من الأرقام الصحيحة
+  // استخدام بيانات المستخدم الممررة، مع التأكد من الأرقام الصحيحة من الورك شيت
   const subscriberData = {
     subscriberNumber: subscriber.subscriberNumber || '1',
     fullName: subscriber.fullName || 'مستخدم',
@@ -15,11 +15,11 @@ export const FixedSubscriberInfo: React.FC<FixedSubscriberInfoProps> = ({ subscr
     sharesCount: subscriber.sharesCount || 0,
     totalSavings: subscriber.totalSavings || 0,
     monthlyPayment: subscriber.monthlyPayment || 0,
-    baseShareValue: subscriber.baseShareValue || 900,
-    currentShareValue: subscriber.currentShareValue || 950,
+    baseShareValue: subscriber.baseShareValue || 906.93,  // القيمة الصحيحة من الورك شيت
+    currentShareValue: subscriber.currentShareValue || 916.92,  // القيمة الصحيحة من الورك شيت
     realPortfolioValue: subscriber.realPortfolioValue || 0,
     ownershipPercentage: subscriber.ownershipPercentage || 0,
-    growthPercentage: subscriber.growthPercentage || 4.5,
+    growthPercentage: subscriber.growthPercentage || -4.5,  // القيمة الصحيحة من الورك شيت (سالبة)
   };
 
   const infoItems = [

@@ -237,11 +237,19 @@ function App() {
   }, []);
 
   const handleLogin = (userData: any) => {
-    console.log('✅ Login successful, clearing cache and setting user data');
+    console.log('✅ Login successful, clearing ALL cache and setting user data');
     
-    // مسح الـ cache
+    // مسح جميع أنواع الـ cache
     localStorage.removeItem('portfolioCache');
     localStorage.removeItem('subscribersCache');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userCache');
+    
+    // مسح session storage أيضاً
+    sessionStorage.clear();
+    
+    console.log('🧹 All cache cleared, setting fresh user data:', userData);
     
     setUser({
       id: userData.subscriberNumber,
