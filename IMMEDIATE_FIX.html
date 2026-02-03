@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الحل الفوري - البيانات المحدثة</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #2d3748;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #4a5568;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4fd1c7;
+            margin: 10px 0;
+        }
+        .stat-label {
+            color: #a0aec0;
+            font-size: 0.9em;
+        }
+        .portfolio-section {
+            background: #2d3748;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #4a5568;
+            margin-bottom: 30px;
+        }
+        .portfolio-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .portfolio-table th,
+        .portfolio-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #4a5568;
+        }
+        .portfolio-table th {
+            background: #4a5568;
+            color: white;
+            font-weight: 600;
+        }
+        .portfolio-table tr:nth-child(even) {
+            background: #374151;
+        }
+        .new-column {
+            background: #fbbf24 !important;
+            color: #1f2937;
+            font-weight: bold;
+        }
+        .updated-value {
+            background: #10b981 !important;
+            color: white;
+            font-weight: bold;
+        }
+        .total-row {
+            background: #1e40af !important;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .admin-section {
+            background: #2d3748;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #4a5568;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #4a5568;
+        }
+        .admin-table th {
+            background: #4a5568;
+            color: white;
+        }
+        .removed-column {
+            background: #ef4444 !important;
+            color: white;
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .fix-banner {
+            background: #dc2626;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 الحل الفوري - البيانات المحدثة</h1>
+            <p>هذه هي البيانات الصحيحة التي يجب أن تظهر في الموقع</p>
+        </div>
+
+        <div class="fix-banner">
+            ⚠️ المشكلة: الموقع لا يزال يعرض البيانات القديمة - هذه هي البيانات الصحيحة المحدثة
+        </div>
+
+        <!-- إحصائيات محدثة -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">إجمالي المشتركين</div>
+                <div class="stat-value">21</div>
+                <small>مشترك نشط</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">عدد الأسهم</div>
+                <div class="stat-value">191</div>
+                <small>سهم موزع</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">قيمة السهم الحالي</div>
+                <div class="stat-value updated-value">915.43 ر.س</div>
+                <small>بدلاً من 906.93</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">إجمالي المحفظة</div>
+                <div class="stat-value updated-value">174,846.41 ر.س</div>
+                <small>بدلاً من 185,466.35</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">نسبة النمو</div>
+                <div class="stat-value" style="color: #ef4444;">-3.6%</div>
+                <small>بدلاً من -4.5%</small>
+            </div>
+        </div>
+
+        <!-- جدول المحفظة المحدث -->
+        <div class="portfolio-section">
+            <h3>💼 جدول المحفظة المحدث (مع عمود التكلفة الأساسية)</h3>
+            <table class="portfolio-table">
+                <thead>
+                    <tr>
+                        <th>الشركة</th>
+                        <th>الرمز</th>
+                        <th>الوحدات</th>
+                        <th class="updated-value">سعر السوق</th>
+                        <th class="new-column">التكلفة الأساسية ($)</th>
+                        <th class="updated-value">القيمة ($)</th>
+                        <th class="updated-value">ربح/خسارة</th>
+                        <th class="updated-value">القيمة (ر.س)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>S&P500</td>
+                        <td>SPUS</td>
+                        <td>257</td>
+                        <td class="updated-value">$51.1</td>
+                        <td class="new-column">$11,601</td>
+                        <td class="updated-value">$13,132.70</td>
+                        <td class="updated-value">$1,531.70</td>
+                        <td class="updated-value">49,504 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>قطاع التكنولوجيا</td>
+                        <td>SPTE</td>
+                        <td>109</td>
+                        <td class="updated-value">$36.31</td>
+                        <td class="new-column">$3,836</td>
+                        <td class="updated-value">$3,957.79</td>
+                        <td class="updated-value">$121.79</td>
+                        <td class="updated-value">14,385 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>الأسواق الناشئة</td>
+                        <td>SPWO</td>
+                        <td>4</td>
+                        <td class="updated-value">$29.44</td>
+                        <td class="new-column">$131</td>
+                        <td class="updated-value">$117.76</td>
+                        <td class="updated-value">-$13.24</td>
+                        <td class="updated-value">491 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>البيتكوين</td>
+                        <td>IBIT</td>
+                        <td>46</td>
+                        <td class="updated-value">$43.1</td>
+                        <td class="new-column">$2,534</td>
+                        <td class="updated-value">$1,982.60</td>
+                        <td class="updated-value">-$551.40</td>
+                        <td class="updated-value">9,503 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>ذهب</td>
+                        <td>GLDM</td>
+                        <td>19</td>
+                        <td class="updated-value">$97.94</td>
+                        <td class="new-column">$2,000</td>
+                        <td class="updated-value">$1,860.86</td>
+                        <td class="updated-value">-$139.14</td>
+                        <td class="updated-value">7,500 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>صكوك</td>
+                        <td>Deeds</td>
+                        <td>50</td>
+                        <td class="updated-value">$1,113.34</td>
+                        <td class="new-column">$54,000</td>
+                        <td class="updated-value">$14,844.00</td>
+                        <td class="updated-value">$445.00</td>
+                        <td class="updated-value">54,000 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>صندوق القروض</td>
+                        <td>Loan Fund</td>
+                        <td>1</td>
+                        <td class="updated-value">$40,238.00</td>
+                        <td class="new-column">$38,000</td>
+                        <td class="updated-value">$10,730.00</td>
+                        <td class="updated-value">$597.00</td>
+                        <td class="updated-value">38,000 ر.س</td>
+                    </tr>
+                    <tr>
+                        <td>وديعة</td>
+                        <td>DEPOSIT</td>
+                        <td>1</td>
+                        <td class="updated-value">$6,800.00</td>
+                        <td class="new-column">$6,800</td>
+                        <td class="updated-value">$6,800</td>
+                        <td class="updated-value">$0</td>
+                        <td class="updated-value">6,800 ر.س</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="7">إجمالي المحفظة</td>
+                        <td>174,846.41 ر.س</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- جدول الإدمن المحدث -->
+        <div class="admin-section">
+            <h3>👥 جدول الإدمن المحدث (بدون عمود رقم المشترك)</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>المشترك</th>
+                        <th class="removed-column">رقم المشترك (محذوف)</th>
+                        <th>الأسهم</th>
+                        <th class="updated-value">قيمة المحفظة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>جعفر طاهر النزر<br><small>536003223</small></td>
+                        <td class="removed-column">#1</td>
+                        <td>42 سهم</td>
+                        <td class="updated-value">38,447.90 SAR</td>
+                    </tr>
+                    <tr>
+                        <td>عباس صالح النزر<br><small>504996691</small></td>
+                        <td class="removed-column">#2</td>
+                        <td>24 سهم</td>
+                        <td class="updated-value">21,970.23 SAR</td>
+                    </tr>
+                    <tr>
+                        <td>محمد دعبل العثمان<br><small>545473331</small></td>
+                        <td class="removed-column">#3</td>
+                        <td>5 أسهم</td>
+                        <td class="updated-value">5,492.56 SAR</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #a0aec0; font-style: italic;">
+                            ... وباقي المشتركين بالقيم المحدثة
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="background: #374151; padding: 20px; border-radius: 8px; margin-top: 30px;">
+            <h4>🔧 الخطوات التالية لإصلاح المشكلة:</h4>
+            <ol>
+                <li><strong>مسح Cache المتصفح:</strong> Ctrl+Shift+Delete</li>
+                <li><strong>إعادة تحميل قوي:</strong> Ctrl+F5</li>
+                <li><strong>فحص Console:</strong> F12 → Console → ابحث عن "Version 8.0.0"</li>
+                <li><strong>إذا لم تنجح:</strong> قد نحتاج لإعادة نشر الموقع</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

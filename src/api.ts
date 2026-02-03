@@ -5,9 +5,10 @@ const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
 
 // Force rebuild timestamp - ensure latest changes are deployed
 const CACHE_BUSTER = Date.now();
-const VERSION = '8.0.0';
+const VERSION = '9.0.0-FORCE-UPDATE';
 console.log('🚀 API Module loaded - Version', VERSION, '- Cache Buster:', CACHE_BUSTER);
 console.log('📋 AUTO-UPDATE: System will fetch fresh data from worksheet every hour');
+console.log('⚠️ FORCE UPDATE: Using new data structure - Clear cache if old data appears');
 
 // Auto-update mechanism - refresh data every hour
 let lastDataUpdate = 0;
@@ -53,6 +54,20 @@ const fetchWithTimeout = async (url: string, timeout = FETCH_TIMEOUT) => {
 };
 
 export const api = {
+  // Force clear all cached data and reload
+  forceClearCache() {
+    console.log('🔄 FORCE CLEARING ALL CACHED DATA...');
+    cachedSubscribersData = [];
+    cachedPortfolioData = null;
+    lastDataUpdate = 0;
+    
+    // Clear localStorage
+    localStorage.removeItem('currentUser');
+    localStorage.clear();
+    
+    console.log('✅ All cached data cleared - will reload fresh data');
+  },
+
   // Force refresh data from worksheet
   async forceRefreshData() {
     console.log('🔄 FORCING DATA REFRESH from worksheet...');
