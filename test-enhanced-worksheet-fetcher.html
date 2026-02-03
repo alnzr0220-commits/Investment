@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار جلب البيانات المحسن</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-right: 4px solid #007bff;
+        }
+        .test-button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+        .test-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .data-display {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .portfolio-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .portfolio-table th,
+        .portfolio-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .portfolio-table th {
+            background: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+        .portfolio-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .new-column {
+            background: #fff3cd !important;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 اختبار جلب البيانات المحسن</h1>
+        
+        <div class="test-section">
+            <h3>📋 اختبار جلب بيانات المحفظة</h3>
+            <p>سيتم اختبار الأداة المحسنة لجلب البيانات من Google Sheets مع إعادة المحاولة والانتظار</p>
+            <button class="test-button" onclick="testPortfolioFetch()" id="portfolioBtn">
+                جلب بيانات المحفظة المحدثة
+            </button>
+            <div id="portfolioStatus"></div>
+            <div id="portfolioData"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👥 اختبار جلب بيانات المشتركين</h3>
+            <button class="test-button" onclick="testSubscribersFetch()" id="subscribersBtn">
+                جلب بيانات المشتركين
+            </button>
+            <div id="subscribersStatus"></div>
+            <div id="subscribersData"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔄 اختبار التحديث التلقائي</h3>
+            <button class="test-button" onclick="testAutoUpdate()" id="autoBtn">
+                تشغيل التحديث التلقائي
+            </button>
+            <div id="autoStatus"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // محاكاة WorksheetFetcher
+        class WorksheetFetcher {
+            static async fetchWithRetry(url, maxRetries = 3, delayMs = 2000, timeoutMs = 15000) {
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        console.log(`🔄 Attempt ${attempt}/${maxRetries} for: ${url}`);
+                        
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+                        
+                        const response = await fetch(url, {
+                            signal: controller.signal,
+                            headers: {
+                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                                'Accept': 'text/csv,text/plain,text/html,*/*',
+                                'Cache-Control': 'no-cache'
+                            }
+                        });
+                        
+                        clearTimeout(timeoutId);
+                        
+                        if (response.ok) {
+                            const text = await response.text();
+                            console.log(`📋 Response length: ${text.length} characters`);
+                            
+                            if (text.length > 200 && !text.includes('بيانات المشتركين بالصندوق المستقبل') && text.includes(',')) {
+                                console.log(`✅ Successfully fetched data from: ${url}`);
+                                return text;
+                            } else {
+                                console.log(`⚠️ Response seems to be loading page, waiting...`);
+                                if (attempt < maxRetries) {
+                                    await this.delay(delayMs * attempt);
+                                }
+                            }
+                        }
+                        
+                    } catch (error) {
+                        console.warn(`❌ Attempt ${attempt} failed:`, error);
+                        if (attempt < maxRetries) {
+                            await this.delay(delayMs * attempt);
+                        }
+                    }
+                }
+                
+                return null;
+            }
+
+            static async fetchPortfolio() {
+                const urls = [
+                    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=1614954373',
+                    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=1',
+                    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv'
+                ];
+
+                for (const url of urls) {
+                    const data = await this.fetchWithRetry(url, 3, 3000, 20000);
+                    if (data) return data;
+                }
+
+                return null;
+            }
+
+            static async fetchSubscribers() {
+                const urls = [
+                    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv&gid=0',
+                    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSIcY_pndHy91i5AE9asBpmtD0DP_msWb2vT8rs2rFFGiBLVy8mILf9Ac_rGKlizFYhdXOQIheHi5lx/pub?output=csv'
+                ];
+
+                for (const url of urls) {
+                    const data = await this.fetchWithRetry(url, 3, 3000, 20000);
+                    if (data) return data;
+                }
+
+                return null;
+            }
+
+            static delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            static parsePortfolioData(csvText) {
+                const lines = csvText.split('\\n').filter(line => line.trim());
+                const items = [];
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    const values = line.includes('\\t') ? 
+                        line.split('\\t').map(v => v.trim().replace(/^"|"$/g, '')) :
+                        line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                    
+                    if (values.length >= 8 && values[0] && !values[0].toLowerCase().includes('إجمالي')) {
+                        items.push({
+                            companyName: values[0] || '',
+                            assetSymbol: values[1] || '',
+                            units: parseFloat(values[2]) || 0,
+                            marketPrice: parseFloat(values[3]) || 0,
+                            averagePrice: parseFloat(values[4]) || 0,
+                            baseCost: parseFloat(values[5]) || 0,
+                            marketValueUSD: parseFloat(values[6]) || 0,
+                            unrealizedProfitLoss: parseFloat(values[7]) || 0,
+                            totalValueSAR: parseFloat(values[8]) || 0,
+                            growth: parseFloat(values[9]) || 0,
+                        });
+                    }
+                }
+                
+                return { items, totalPortfolioValue: items.reduce((sum, item) => sum + item.totalValueSAR, 0) };
+            }
+        }
+
+        window.testPortfolioFetch = async function() {
+            const btn = document.getElementById('portfolioBtn');
+            const status = document.getElementById('portfolioStatus');
+            const data = document.getElementById('portfolioData');
+            
+            btn.disabled = true;
+            status.innerHTML = '<div class="status loading">🔄 جاري جلب بيانات المحفظة... قد يستغرق هذا بعض الوقت</div>';
+            data.innerHTML = '';
+            
+            try {
+                const portfolioData = await WorksheetFetcher.fetchPortfolio();
+                
+                if (portfolioData) {
+                    const parsed = WorksheetFetcher.parsePortfolioData(portfolioData);
+                    
+                    status.innerHTML = '<div class="status success">✅ تم جلب بيانات المحفظة بنجاح!</div>';
+                    
+                    let tableHTML = `
+                        <table class="portfolio-table">
+                            <thead>
+                                <tr>
+                                    <th>الشركة</th>
+                                    <th>الرمز</th>
+                                    <th>الوحدات</th>
+                                    <th>سعر السوق</th>
+                                    <th>متوسط السعر</th>
+                                    <th class="new-column">التكلفة الأساسية ($)</th>
+                                    <th>القيمة ($)</th>
+                                    <th>ربح/خسارة</th>
+                                    <th>القيمة (ر.س)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    parsed.items.forEach(item => {
+                        tableHTML += `
+                            <tr>
+                                <td>${item.companyName}</td>
+                                <td>${item.assetSymbol}</td>
+                                <td>${item.units}</td>
+                                <td>$${item.marketPrice}</td>
+                                <td>$${item.averagePrice}</td>
+                                <td class="new-column">$${item.baseCost}</td>
+                                <td>$${item.marketValueUSD}</td>
+                                <td>$${item.unrealizedProfitLoss}</td>
+                                <td>${item.totalValueSAR} ر.س</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #007bff; color: white; font-weight: bold;">
+                                    <td colspan="8">إجمالي المحفظة</td>
+                                    <td>${parsed.totalPortfolioValue} ر.س</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    `;
+                    
+                    data.innerHTML = tableHTML;
+                } else {
+                    status.innerHTML = '<div class="status error">❌ فشل في جلب بيانات المحفظة</div>';
+                    data.innerHTML = '<div class="data-display">لم يتم العثور على بيانات</div>';
+                }
+                
+            } catch (error) {
+                status.innerHTML = '<div class="status error">❌ خطأ في جلب البيانات: ' + error.message + '</div>';
+                data.innerHTML = '<div class="data-display">خطأ: ' + error.message + '</div>';
+            }
+            
+            btn.disabled = false;
+        };
+
+        window.testSubscribersFetch = async function() {
+            const btn = document.getElementById('subscribersBtn');
+            const status = document.getElementById('subscribersStatus');
+            const data = document.getElementById('subscribersData');
+            
+            btn.disabled = true;
+            status.innerHTML = '<div class="status loading">🔄 جاري جلب بيانات المشتركين...</div>';
+            data.innerHTML = '';
+            
+            try {
+                const subscribersData = await WorksheetFetcher.fetchSubscribers();
+                
+                if (subscribersData) {
+                    status.innerHTML = '<div class="status success">✅ تم جلب بيانات المشتركين بنجاح!</div>';
+                    data.innerHTML = '<div class="data-display">' + subscribersData.substring(0, 500) + '...</div>';
+                } else {
+                    status.innerHTML = '<div class="status error">❌ فشل في جلب بيانات المشتركين</div>';
+                }
+                
+            } catch (error) {
+                status.innerHTML = '<div class="status error">❌ خطأ: ' + error.message + '</div>';
+            }
+            
+            btn.disabled = false;
+        };
+
+        window.testAutoUpdate = async function() {
+            const btn = document.getElementById('autoBtn');
+            const status = document.getElementById('autoStatus');
+            
+            btn.disabled = true;
+            status.innerHTML = '<div class="status loading">🔄 تشغيل التحديث التلقائي...</div>';
+            
+            // محاكاة التحديث التلقائي
+            setTimeout(() => {
+                status.innerHTML = '<div class="status success">✅ تم تشغيل التحديث التلقائي - سيتم التحديث كل ساعة</div>';
+                btn.disabled = false;
+            }, 2000);
+        };
+    </script>
+</body>
+</html>

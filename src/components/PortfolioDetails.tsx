@@ -199,6 +199,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الرمز</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الوحدات</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">سعر السوق</th>
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">التكلفة الأساسية ($)</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">القيمة ($)</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ربح/خسارة غير محققة</th>
                   <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">القيمة (ر.س)</th>
@@ -215,6 +216,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{item.assetSymbol}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{item.units.toLocaleString()}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${item.marketPrice.toFixed(2)}</td>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">${item.baseCost.toLocaleString()}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${item.totalValueUSD.toLocaleString()}</td>
                     <td className={`px-4 py-4 whitespace-nowrap text-sm font-bold ${item.unrealizedProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>${item.unrealizedProfitLoss.toLocaleString()}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-bold text-primary-600">{item.totalValueSAR.toLocaleString()} ر.س</td>
@@ -226,7 +228,7 @@ export const PortfolioDetails: React.FC<PortfolioDetailsProps> = ({ data }) => {
                   className="cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => setSelectedCompany(null)}
                 >
-                  <td colSpan={7} className="px-4 py-4 text-sm font-bold text-gray-900 text-right">
+                  <td colSpan={8} className="px-4 py-4 text-sm font-bold text-gray-900 text-right">
                     <div className="flex justify-between items-center">
                       <span>إجمالي قيمة المحفظة</span>
                       <span className="text-lg font-bold text-primary-700">{actualData.totalPortfolioValue.toLocaleString()} ر.س</span>

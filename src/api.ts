@@ -1,3 +1,5 @@
+import WorksheetFetcher from './utils/worksheetFetcher.js';
+
 // API URL for staging environment (updated v6 - FORCE CACHE CLEAR)
 const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
 
@@ -354,11 +356,11 @@ export const api = {
         totalSavings: 38100,
         monthlyPayment: 2100,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 38090.89,
+        currentShareValue: 915.43,
+        realPortfolioValue: 38447.90,
         ownershipPercentage: 20.49,
-        growthPercentage: -4.5,
-        totalIncome: 38090.89,
+        growthPercentage: -3.6,
+        totalIncome: 38447.90,
       },
       {
         subscriberNumber: '2',
@@ -368,11 +370,11 @@ export const api = {
         totalSavings: 21600,
         monthlyPayment: 1200,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 21766.22,
+        currentShareValue: 915.43,
+        realPortfolioValue: 21970.23,
         ownershipPercentage: 11.71,
-        growthPercentage: -4.5,
-        totalIncome: 21766.22,
+        growthPercentage: -3.6,
+        totalIncome: 21970.23,
       },
       {
         subscriberNumber: '3',
@@ -382,11 +384,11 @@ export const api = {
         totalSavings: 4000,
         monthlyPayment: 1000,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 4534.63,
+        currentShareValue: 915.43,
+        realPortfolioValue: 5492.56,
         ownershipPercentage: 9.76,
-        growthPercentage: -4.5,
-        totalIncome: 4534.63,
+        growthPercentage: -3.6,
+        totalIncome: 5492.56,
       },
       {
         subscriberNumber: '4',
@@ -396,11 +398,11 @@ export const api = {
         totalSavings: 13500,
         monthlyPayment: 750,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 13603.89,
+        currentShareValue: 915.43,
+        realPortfolioValue: 13731.39,
         ownershipPercentage: 7.32,
-        growthPercentage: -4.5,
-        totalIncome: 13603.89,
+        growthPercentage: -3.6,
+        totalIncome: 13731.39,
       },
       {
         subscriberNumber: '5',
@@ -410,11 +412,11 @@ export const api = {
         totalSavings: 9000,
         monthlyPayment: 500,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 9069.26,
+        currentShareValue: 915.43,
+        realPortfolioValue: 9154.26,
         ownershipPercentage: 4.88,
-        growthPercentage: -4.5,
-        totalIncome: 9069.26,
+        growthPercentage: -3.6,
+        totalIncome: 9154.26,
       },
       {
         subscriberNumber: '6',
@@ -424,11 +426,11 @@ export const api = {
         totalSavings: 9000,
         monthlyPayment: 500,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 9069.26,
+        currentShareValue: 915.43,
+        realPortfolioValue: 9154.26,
         ownershipPercentage: 4.88,
-        growthPercentage: -4.5,
-        totalIncome: 9069.26,
+        growthPercentage: -3.6,
+        totalIncome: 9154.26,
       },
       {
         subscriberNumber: '7',
@@ -438,11 +440,11 @@ export const api = {
         totalSavings: 9000,
         monthlyPayment: 500,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 9069.26,
+        currentShareValue: 915.43,
+        realPortfolioValue: 9154.26,
         ownershipPercentage: 4.88,
-        growthPercentage: -4.5,
-        totalIncome: 9069.26,
+        growthPercentage: -3.6,
+        totalIncome: 9154.26,
       },
       {
         subscriberNumber: '8',
@@ -452,11 +454,11 @@ export const api = {
         totalSavings: 9000,
         monthlyPayment: 500,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 9069.26,
+        currentShareValue: 915.43,
+        realPortfolioValue: 9154.26,
         ownershipPercentage: 4.88,
-        growthPercentage: -4.5,
-        totalIncome: 9069.26,
+        growthPercentage: -3.6,
+        totalIncome: 9154.26,
       },
       {
         subscriberNumber: '9',
@@ -466,11 +468,11 @@ export const api = {
         totalSavings: 6300,
         monthlyPayment: 350,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 6348.48,
+        currentShareValue: 915.43,
+        realPortfolioValue: 6407.98,
         ownershipPercentage: 3.41,
-        growthPercentage: -4.5,
-        totalIncome: 6348.48,
+        growthPercentage: -3.6,
+        totalIncome: 6407.98,
       },
       {
         subscriberNumber: '10',
@@ -480,11 +482,11 @@ export const api = {
         totalSavings: 5400,
         monthlyPayment: 300,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 5441.56,
+        currentShareValue: 915.43,
+        realPortfolioValue: 5492.56,
         ownershipPercentage: 2.93,
-        growthPercentage: -4.5,
-        totalIncome: 5441.56,
+        growthPercentage: -3.6,
+        totalIncome: 5492.56,
       },
       {
         subscriberNumber: '11',
@@ -494,11 +496,11 @@ export const api = {
         totalSavings: 5400,
         monthlyPayment: 300,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 5441.56,
+        currentShareValue: 915.43,
+        realPortfolioValue: 5492.56,
         ownershipPercentage: 2.93,
-        growthPercentage: -4.5,
-        totalIncome: 5441.56,
+        growthPercentage: -3.6,
+        totalIncome: 5492.56,
       },
       {
         subscriberNumber: '12',
@@ -508,11 +510,11 @@ export const api = {
         totalSavings: 5400,
         monthlyPayment: 300,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 5441.56,
+        currentShareValue: 915.43,
+        realPortfolioValue: 5492.56,
         ownershipPercentage: 2.93,
-        growthPercentage: -4.5,
-        totalIncome: 5441.56,
+        growthPercentage: -3.6,
+        totalIncome: 5492.56,
       },
       {
         subscriberNumber: '13',
@@ -522,11 +524,11 @@ export const api = {
         totalSavings: 5400,
         monthlyPayment: 300,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 5441.56,
+        currentShareValue: 915.43,
+        realPortfolioValue: 5492.56,
         ownershipPercentage: 2.93,
-        growthPercentage: -4.5,
-        totalIncome: 5441.56,
+        growthPercentage: -3.6,
+        totalIncome: 5492.56,
       },
       {
         subscriberNumber: '14',
@@ -536,11 +538,11 @@ export const api = {
         totalSavings: 3600,
         monthlyPayment: 200,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 3627.70,
+        currentShareValue: 915.43,
+        realPortfolioValue: 3661.70,
         ownershipPercentage: 1.95,
-        growthPercentage: -4.5,
-        totalIncome: 3627.70,
+        growthPercentage: -3.6,
+        totalIncome: 3661.70,
       },
       {
         subscriberNumber: '15',
@@ -550,11 +552,11 @@ export const api = {
         totalSavings: 3050,
         monthlyPayment: 200,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 3627.70,
+        currentShareValue: 915.43,
+        realPortfolioValue: 3661.70,
         ownershipPercentage: 1.95,
-        growthPercentage: -4.5,
-        totalIncome: 3627.70,
+        growthPercentage: -3.6,
+        totalIncome: 3661.70,
       },
       {
         subscriberNumber: '16',
@@ -564,11 +566,11 @@ export const api = {
         totalSavings: 5400,
         monthlyPayment: 300,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 5441.56,
+        currentShareValue: 915.43,
+        realPortfolioValue: 5492.56,
         ownershipPercentage: 2.93,
-        growthPercentage: -4.5,
-        totalIncome: 5441.56,
+        growthPercentage: -3.6,
+        totalIncome: 5492.56,
       },
       {
         subscriberNumber: '17',
@@ -578,11 +580,11 @@ export const api = {
         totalSavings: 2700,
         monthlyPayment: 150,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 2720.78,
+        currentShareValue: 915.43,
+        realPortfolioValue: 2746.28,
         ownershipPercentage: 1.46,
-        growthPercentage: -4.5,
-        totalIncome: 2720.78,
+        growthPercentage: -3.6,
+        totalIncome: 2746.28,
       },
       {
         subscriberNumber: '18',
@@ -592,11 +594,11 @@ export const api = {
         totalSavings: 2700,
         monthlyPayment: 150,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 2720.78,
+        currentShareValue: 915.43,
+        realPortfolioValue: 2746.28,
         ownershipPercentage: 1.46,
-        growthPercentage: -4.5,
-        totalIncome: 2720.78,
+        growthPercentage: -3.6,
+        totalIncome: 2746.28,
       },
       {
         subscriberNumber: '19',
@@ -606,11 +608,11 @@ export const api = {
         totalSavings: 2700,
         monthlyPayment: 150,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 2720.78,
+        currentShareValue: 915.43,
+        realPortfolioValue: 2746.28,
         ownershipPercentage: 1.46,
-        growthPercentage: -4.5,
-        totalIncome: 2720.78,
+        growthPercentage: -3.6,
+        totalIncome: 2746.28,
       },
       {
         subscriberNumber: '20',
@@ -620,11 +622,11 @@ export const api = {
         totalSavings: 2850,
         monthlyPayment: 150,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 2720.78,
+        currentShareValue: 915.43,
+        realPortfolioValue: 2746.28,
         ownershipPercentage: 1.46,
-        growthPercentage: -4.5,
-        totalIncome: 2720.78,
+        growthPercentage: -3.6,
+        totalIncome: 2746.28,
       },
       {
         subscriberNumber: '21',
@@ -634,11 +636,11 @@ export const api = {
         totalSavings: 2700,
         monthlyPayment: 150,
         baseShareValue: 950.00,
-        currentShareValue: 906.93,
-        realPortfolioValue: 2720.78,
+        currentShareValue: 915.43,
+        realPortfolioValue: 2746.28,
         ownershipPercentage: 1.46,
-        growthPercentage: -4.5,
-        totalIncome: 2720.78,
+        growthPercentage: -3.6,
+        totalIncome: 2746.28,
       }
     ];
   },
@@ -778,66 +780,66 @@ export const api = {
           companyName: 'يغطي الأسهم الامريكية الكبرى (S&P500)',
           assetSymbol: 'SPUS',
           units: 257,
-          marketPrice: 51.46,
+          marketPrice: 51.1,
           averagePrice: 45.27,
           baseCost: 11601,
-          marketValueUSD: 13225.22,
-          totalValueUSD: 13225.22,
-          unrealizedProfitLoss: 1624.22,
-          totalValueSAR: 49594.58,
-          growth: 14.0,
+          marketValueUSD: 13132.70,
+          totalValueUSD: 13132.70,
+          unrealizedProfitLoss: 1531.70,
+          totalValueSAR: 49504,
+          growth: 13.2,
         },
         {
           companyName: 'يغطي قطاع التكنلوجيا العالمي (بمافيه أمريكيا)',
           assetSymbol: 'SPTE',
           units: 109,
-          marketPrice: 36.73,
+          marketPrice: 36.31,
           averagePrice: 35.29,
           baseCost: 3836,
-          marketValueUSD: 4003.57,
-          totalValueUSD: 4003.57,
-          unrealizedProfitLoss: 167.57,
-          totalValueSAR: 15013.39,
-          growth: 4.4,
+          marketValueUSD: 3957.79,
+          totalValueUSD: 3957.79,
+          unrealizedProfitLoss: 121.79,
+          totalValueSAR: 14385,
+          growth: 3.2,
         },
         {
           companyName: 'الأسواق المتقدمة والناشئة بإستثناء أمريكا',
           assetSymbol: 'SPWO',
           units: 4,
-          marketPrice: 29.31,
+          marketPrice: 29.44,
           averagePrice: 29.87,
           baseCost: 131,
-          marketValueUSD: 117.24,
-          totalValueUSD: 117.24,
-          unrealizedProfitLoss: -13.76,
-          totalValueSAR: 439.65,
-          growth: -10.5,
+          marketValueUSD: 117.76,
+          totalValueUSD: 117.76,
+          unrealizedProfitLoss: -13.24,
+          totalValueSAR: 491,
+          growth: -10.1,
         },
         {
           companyName: 'البيتكوين',
           assetSymbol: 'IBIT',
           units: 46,
-          marketPrice: 47.49,
+          marketPrice: 43.1,
           averagePrice: 54.55,
           baseCost: 2534,
-          marketValueUSD: 2184.54,
-          totalValueUSD: 2184.54,
-          unrealizedProfitLoss: -349.46,
-          totalValueSAR: 8192.03,
-          growth: -13.8,
+          marketValueUSD: 1982.60,
+          totalValueUSD: 1982.60,
+          unrealizedProfitLoss: -551.40,
+          totalValueSAR: 9503,
+          growth: -21.0,
         },
         {
           companyName: 'ذهب',
           assetSymbol: 'GLDM',
           units: 19,
-          marketPrice: 96.01,
+          marketPrice: 97.94,
           averagePrice: 104.37,
           baseCost: 2000,
-          marketValueUSD: 1824.19,
-          totalValueUSD: 1824.19,
-          unrealizedProfitLoss: -175.81,
-          totalValueSAR: 6840.71,
-          growth: -8.8,
+          marketValueUSD: 1860.86,
+          totalValueUSD: 1860.86,
+          unrealizedProfitLoss: -139.14,
+          totalValueSAR: 7500,
+          growth: -6.2,
         },
         {
           companyName: 'صكوك',
@@ -846,24 +848,24 @@ export const api = {
           marketPrice: 1113.34,
           averagePrice: 1080.00,
           baseCost: 54000,
-          marketValueUSD: 55667,
-          totalValueUSD: 55667,
-          unrealizedProfitLoss: 1667,
-          totalValueSAR: 58467.00,
+          marketValueUSD: 14844.00,
+          totalValueUSD: 14844.00,
+          unrealizedProfitLoss: 445.00,
+          totalValueSAR: 54000,
           growth: 3.1,
         },
         {
           companyName: 'صندوق معايير للقروض',
           assetSymbol: 'Loan Fund',
           units: 1,
-          marketPrice: 40119.00,
+          marketPrice: 40238.00,
           averagePrice: 38000.00,
           baseCost: 38000,
-          marketValueUSD: 40119,
-          totalValueUSD: 40119,
-          unrealizedProfitLoss: 2119,
-          totalValueSAR: 40119.00,
-          growth: 5.6,
+          marketValueUSD: 10730.00,
+          totalValueUSD: 10730.00,
+          unrealizedProfitLoss: 597.00,
+          totalValueSAR: 38000,
+          growth: 5.9,
         },
         {
           companyName: 'وديعة',
@@ -875,11 +877,11 @@ export const api = {
           marketValueUSD: 6800,
           totalValueUSD: 6800,
           unrealizedProfitLoss: 0,
-          totalValueSAR: 6800.00,
+          totalValueSAR: 6800,
           growth: 0.0,
         }
       ],
-      totalPortfolioValue: 185466.35
+      totalPortfolioValue: 174846.41
     };
     
     console.log('⚡ Using local portfolio data immediately');
@@ -893,46 +895,30 @@ export const api = {
     return localPortfolioData;
   },
 
-  // دالة جديدة لتحديث المحفظة في الخلفية
+  // دالة جديدة لتحديث المحفظة في الخلفية مع الأداة المحسنة
   async updatePortfolioFromGoogleSheetsInBackground() {
-    console.log('🔄 Starting background portfolio update from Google Sheets...');
+    console.log('🔄 Starting enhanced background portfolio update...');
     
     try {
-      const urls = [
-        PORTFOLIO_DATA_URL,
-        ALT_PORTFOLIO_URL
-      ];
+      // استخدام الأداة المحسنة لجلب البيانات
+      const portfolioData = await WorksheetFetcher.fetchPortfolio();
       
-      for (const url of urls) {
-        try {
-          console.log(`📋 Background portfolio: Trying ${url}`);
-          
-          // timeout أقل للتحديث في الخلفية
-          const response = await fetchWithTimeout(url, 10000);
-          
-          if (response.ok) {
-            const textData = await response.text();
-            console.log('📋 Background portfolio: Response length:', textData.length);
-            
-            // التحقق من وجود بيانات حقيقية
-            if (textData.length > 500 && (textData.includes('SPUS') || textData.includes('S&P500'))) {
-              const result = this.parseCSVToPortfolio(textData);
-              if (result.items.length >= 7) {
-                console.log('✅ Background: Successfully updated portfolio from Google Sheets!');
-                cachedPortfolioData = result;
-                return;
-              }
-            }
-          }
-        } catch (error) {
-          console.warn(`Background portfolio update failed for ${url}:`, error);
+      if (portfolioData) {
+        console.log('📋 Successfully fetched portfolio data, parsing...');
+        const result = WorksheetFetcher.parsePortfolioData(portfolioData);
+        
+        if (result.items.length >= 7) {
+          console.log('✅ Background: Successfully updated portfolio with enhanced fetcher!');
+          console.log(`📊 Portfolio items: ${result.items.length}, Total value: ${result.totalPortfolioValue}`);
+          cachedPortfolioData = result;
+          return;
         }
       }
       
-      console.log('📋 Background portfolio: All URLs failed, keeping local data');
+      console.log('📋 Enhanced fetcher failed, keeping local data');
       
     } catch (error) {
-      console.warn('Background portfolio update error:', error);
+      console.warn('Enhanced background portfolio update error:', error);
     }
   },
 
