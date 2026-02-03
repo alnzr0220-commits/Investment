@@ -5,7 +5,7 @@ const API_URL = 'https://staging--fxugj5spc8ghki7u3abz.youbase.cloud';
 
 // Force rebuild timestamp - ensure latest changes are deployed
 const CACHE_BUSTER = Date.now();
-const VERSION = '7.0.0';
+const VERSION = '8.0.0';
 console.log('🚀 API Module loaded - Version', VERSION, '- Cache Buster:', CACHE_BUSTER);
 console.log('📋 AUTO-UPDATE: System will fetch fresh data from worksheet every hour');
 
